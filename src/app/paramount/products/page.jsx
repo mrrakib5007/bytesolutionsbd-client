@@ -316,153 +316,279 @@ export default function AdminProductsPage() {
           </button>
         </div>
       ) : (
-        <div className="rounded-2xl border border-gray-200/80 bg-white shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50/70 text-[11px] font-bold text-gray-600 uppercase tracking-wider">
-                  <th className="py-3.5 px-4 sm:px-6">Product</th>
-                  <th className="py-3.5 px-4">Category & Badge</th>
-                  <th className="py-3.5 px-4">Pricing Plans</th>
-                  <th className="py-3.5 px-4">Rating</th>
-                  <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 text-xs">
-                {filteredProducts.map((product) => {
-                  const lowestPrice = product.variants?.[0]?.price;
-                  const highestPrice =
-                    product.variants?.[product.variants.length - 1]?.price;
-                  const plansCount = product.variants?.length || 0;
+        <>
+          {/* Mobile Card View (No horizontal scrolling on small devices) */}
+          <div className="block md:hidden space-y-3">
+            {filteredProducts.map((product) => {
+              const lowestPrice = product.variants?.[0]?.price;
+              const highestPrice =
+                product.variants?.[product.variants.length - 1]?.price;
+              const plansCount = product.variants?.length || 0;
 
-                  return (
-                    <tr
-                      key={product._id}
-                      className="hover:bg-slate-50/60 transition-colors"
+              return (
+                <div
+                  key={product._id}
+                  className="rounded-2xl border border-gray-200/90 bg-white p-4 shadow-xs space-y-3.5"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="relative h-14 w-14 shrink-0 rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
+                      {product.image ? (
+                        <Image
+                          src={product.image}
+                          alt={product.title}
+                          fill
+                          sizes="56px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="flex items-center justify-center h-full text-gray-300">
+                          <FiPackage className="h-6 w-6" />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-xs font-bold text-gray-900 leading-snug line-clamp-2">
+                        {product.title}
+                      </h4>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <span className="text-[10px] font-mono text-gray-400 truncate">
+                          /{product.slug}
+                        </span>
+                        <Link
+                          href={`/products/${product.slug}`}
+                          target="_blank"
+                          className="text-gray-400 hover:text-(--primary)"
+                          title="View live page"
+                        >
+                          <FiExternalLink className="h-3 w-3" />
+                        </Link>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-gray-100 text-gray-700">
+                          {product.category || "General"}
+                        </span>
+                        {product.badge && (
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                            {product.badge}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between border-t border-gray-100 pt-3 text-xs">
+                    <div>
+                      <span className="text-[10px] text-gray-400 block">Pricing</span>
+                      <p className="font-bold font-mono text-gray-900">
+                        ৳ {lowestPrice ?? 0}
+                        {highestPrice && highestPrice !== lowestPrice && (
+                          <span className="font-normal text-gray-500"> - ৳ {highestPrice}</span>
+                        )}
+                      </p>
+                      <span className="text-[10px] text-gray-500">
+                        {plansCount} {plansCount === 1 ? "variant" : "variants"}
+                      </span>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="text-[10px] text-gray-400 block">Rating</span>
+                      <div className="flex items-center gap-1 justify-end">
+                        <FiStar className="h-3.5 w-3.5 text-amber-500 fill-amber-400" />
+                        <span className="font-bold text-gray-900">
+                          {product.rating ?? 5.0}
+                        </span>
+                        <span className="text-[10px] text-gray-400">
+                          ({product.reviewsCount ?? 0})
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions Footer */}
+                  <div className="flex items-center justify-end gap-2 border-t border-gray-100 pt-2.5">
+                    <Link
+                      href={`/products/${product.slug}`}
+                      target="_blank"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
                     >
-                      {/* Product Thumbnail & Details */}
-                      <td className="py-4 px-4 sm:px-6">
-                        <div className="flex items-center gap-3">
-                          <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 shrink-0">
-                            {product.image ? (
-                              <Image
-                                src={product.image}
-                                alt={product.title}
-                                fill
-                                sizes="56px"
-                                className="object-cover"
-                              />
-                            ) : (
-                              <div className="flex items-center justify-center h-full text-gray-300">
-                                <FiPackage className="h-6 w-6" />
-                              </div>
-                            )}
-                          </div>
+                      <FiExternalLink className="h-3.5 w-3.5" />
+                      <span>Live</span>
+                    </Link>
 
-                          <div className="min-w-0 max-w-xs sm:max-w-sm">
-                            <p className="font-bold text-gray-900 truncate text-xs sm:text-sm">
-                              {product.title}
-                            </p>
-                            <div className="flex items-center gap-1.5 mt-0.5">
-                              <span className="text-[11px] text-gray-400 font-mono truncate">
-                                /{product.slug}
-                              </span>
-                              <Link
-                                href={`/products/${product.slug}`}
-                                target="_blank"
-                                className="text-gray-400 hover:text-(--primary) transition-colors"
-                                title="View live page"
-                              >
-                                <FiExternalLink className="h-3 w-3" />
-                              </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEdit(product)}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold hover:bg-blue-100 transition-colors cursor-pointer"
+                    >
+                      <FiEdit2 className="h-3.5 w-3.5" />
+                      <span>Edit</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setDeleteTarget(product)}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold hover:bg-rose-100 transition-colors cursor-pointer"
+                    >
+                      <FiTrash2 className="h-3.5 w-3.5" />
+                      <span>Delete</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block rounded-2xl border border-gray-200/80 bg-white shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-gray-200 bg-gray-50/70 text-[11px] font-bold text-gray-600 uppercase tracking-wider">
+                    <th className="py-3.5 px-4 sm:px-6">Product</th>
+                    <th className="py-3.5 px-4">Category & Badge</th>
+                    <th className="py-3.5 px-4">Pricing Plans</th>
+                    <th className="py-3.5 px-4">Rating</th>
+                    <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100 text-xs">
+                  {filteredProducts.map((product) => {
+                    const lowestPrice = product.variants?.[0]?.price;
+                    const highestPrice =
+                      product.variants?.[product.variants.length - 1]?.price;
+                    const plansCount = product.variants?.length || 0;
+
+                    return (
+                      <tr
+                        key={product._id}
+                        className="hover:bg-slate-50/60 transition-colors"
+                      >
+                        {/* Product Thumbnail & Details */}
+                        <td className="py-4 px-4 sm:px-6">
+                          <div className="flex items-center gap-3">
+                            <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 shrink-0">
+                              {product.image ? (
+                                <Image
+                                  src={product.image}
+                                  alt={product.title}
+                                  fill
+                                  sizes="56px"
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <div className="flex items-center justify-center h-full text-gray-300">
+                                  <FiPackage className="h-6 w-6" />
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="min-w-0 max-w-xs sm:max-w-sm">
+                              <p className="font-bold text-gray-900 truncate text-xs sm:text-sm">
+                                {product.title}
+                              </p>
+                              <div className="flex items-center gap-1.5 mt-0.5">
+                                <span className="text-[11px] text-gray-400 font-mono truncate">
+                                  /{product.slug}
+                                </span>
+                                <Link
+                                  href={`/products/${product.slug}`}
+                                  target="_blank"
+                                  className="text-gray-400 hover:text-(--primary) transition-colors"
+                                  title="View live page"
+                                >
+                                  <FiExternalLink className="h-3 w-3" />
+                                </Link>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Category & Badge */}
-                      <td className="py-4 px-4">
-                        <div className="flex flex-col gap-1 items-start">
-                          <span className="inline-block px-2 py-0.5 rounded-md text-[11px] font-semibold bg-gray-100 text-gray-700">
-                            {product.category || "General"}
-                          </span>
-                          {product.badge && (
-                            <span className="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/70">
-                              {product.badge}
+                        {/* Category & Badge */}
+                        <td className="py-4 px-4">
+                          <div className="flex flex-col gap-1 items-start">
+                            <span className="inline-block px-2 py-0.5 rounded-md text-[11px] font-semibold bg-gray-100 text-gray-700">
+                              {product.category || "General"}
                             </span>
-                          )}
-                        </div>
-                      </td>
-
-                      {/* Pricing Plans */}
-                      <td className="py-4 px-4">
-                        <div className="space-y-0.5">
-                          <p className="font-bold text-gray-900">
-                            ৳ {lowestPrice ?? 0}
-                            {highestPrice && highestPrice !== lowestPrice && (
-                              <span className="font-normal text-gray-500">
-                                {" "}
-                                - ৳ {highestPrice}
+                            {product.badge && (
+                              <span className="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/70">
+                                {product.badge}
                               </span>
                             )}
-                          </p>
-                          <span className="text-[10px] text-gray-500 block">
-                            {plansCount} {plansCount === 1 ? "variant" : "variants"}
-                          </span>
-                        </div>
-                      </td>
+                          </div>
+                        </td>
 
-                      {/* Rating */}
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-1">
-                          <FiStar className="h-3.5 w-3.5 text-amber-500 fill-amber-400" />
-                          <span className="font-bold text-gray-900">
-                            {product.rating ?? 5.0}
-                          </span>
-                          <span className="text-[11px] text-gray-400">
-                            ({product.reviewsCount ?? 0})
-                          </span>
-                        </div>
-                      </td>
+                        {/* Pricing Plans */}
+                        <td className="py-4 px-4">
+                          <div className="space-y-0.5">
+                            <p className="font-bold text-gray-900">
+                              ৳ {lowestPrice ?? 0}
+                              {highestPrice && highestPrice !== lowestPrice && (
+                                <span className="font-normal text-gray-500">
+                                  {" "}
+                                  - ৳ {highestPrice}
+                                </span>
+                              )}
+                            </p>
+                            <span className="text-[10px] text-gray-500 block">
+                              {plansCount} {plansCount === 1 ? "variant" : "variants"}
+                            </span>
+                          </div>
+                        </td>
 
-                      {/* Actions */}
-                      <td className="py-4 px-4 sm:px-6 text-right">
-                        <div className="inline-flex items-center gap-1.5">
-                          <Link
-                            href={`/products/${product.slug}`}
-                            target="_blank"
-                            className="p-2 rounded-xl text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
-                            title="View in store"
-                          >
-                            <FiExternalLink className="h-4 w-4" />
-                          </Link>
+                        {/* Rating */}
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-1">
+                            <FiStar className="h-3.5 w-3.5 text-amber-500 fill-amber-400" />
+                            <span className="font-bold text-gray-900">
+                              {product.rating ?? 5.0}
+                            </span>
+                            <span className="text-[11px] text-gray-400">
+                              ({product.reviewsCount ?? 0})
+                            </span>
+                          </div>
+                        </td>
 
-                          <button
-                            type="button"
-                            onClick={() => handleOpenEdit(product)}
-                            className="p-2 rounded-xl text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
-                            title="Edit product"
-                          >
-                            <FiEdit2 className="h-4 w-4" />
-                          </button>
+                        {/* Actions */}
+                        <td className="py-4 px-4 sm:px-6 text-right">
+                          <div className="inline-flex items-center gap-1.5">
+                            <Link
+                              href={`/products/${product.slug}`}
+                              target="_blank"
+                              className="p-2 rounded-xl text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+                              title="View in store"
+                            >
+                              <FiExternalLink className="h-4 w-4" />
+                            </Link>
 
-                          <button
-                            type="button"
-                            onClick={() => setDeleteTarget(product)}
-                            className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
-                            title="Delete product"
-                          >
-                            <FiTrash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEdit(product)}
+                              className="p-2 rounded-xl text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer"
+                              title="Edit product"
+                            >
+                              <FiEdit2 className="h-4 w-4" />
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setDeleteTarget(product)}
+                              className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                              title="Delete product"
+                            >
+                              <FiTrash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Add / Edit Product Modal */}

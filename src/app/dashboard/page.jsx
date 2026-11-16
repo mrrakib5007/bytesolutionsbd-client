@@ -314,96 +314,181 @@ function UserDashboardContent() {
                       </Link>
                     </div>
                   ) : (
-                    <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs text-gray-600">
-                          <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
-                            <tr>
-                              <th className="px-5 py-3">Order ID</th>
-                              <th className="px-5 py-3">Items</th>
-                              <th className="px-5 py-3">Payment</th>
-                              <th className="px-5 py-3">Total Amount</th>
-                              <th className="px-5 py-3">Status</th>
-                              <th className="px-5 py-3 text-right">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-gray-100">
-                            {orders.map((order) => {
-                              const isCompleted = order.orderStatus === "completed";
-                              const isPending = order.orderStatus === "pending";
-                              const isCancelled = order.orderStatus === "cancelled";
+                    <>
+                      {/* Mobile Cards View (No horizontal scrolling on phones) */}
+                      <div className="block md:hidden space-y-3">
+                        {orders.map((order) => {
+                          const isCompleted = order.orderStatus === "completed";
+                          const isPending = order.orderStatus === "pending";
+                          const isCancelled = order.orderStatus === "cancelled";
 
-                              return (
-                                <tr key={order._id || order.orderId} className="hover:bg-gray-50/50">
-                                  <td className="px-5 py-3.5">
-                                    <div className="font-mono font-bold text-gray-900">
-                                      {order.orderId}
-                                    </div>
-                                    <div className="text-[10px] text-gray-400">
-                                      {order.createdAt
-                                        ? new Date(order.createdAt).toLocaleDateString("en-GB", {
-                                            day: "numeric",
-                                            month: "short",
-                                            year: "numeric",
-                                          })
-                                        : "N/A"}
-                                    </div>
-                                  </td>
-                                  <td className="px-5 py-3.5 font-semibold text-gray-900">
-                                    {order.items?.map((it, idx) => (
-                                      <div key={idx} className="truncate max-w-xs">
-                                        {it.title} ({it.duration})
-                                      </div>
-                                    ))}
-                                  </td>
-                                  <td className="px-5 py-3.5">
-                                    <span className="font-bold uppercase text-gray-800">
-                                      {order.payment?.method}
+                          const formattedDate = order.createdAt
+                            ? new Date(order.createdAt).toLocaleDateString("en-GB", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })
+                            : "N/A";
+
+                          return (
+                            <div
+                              key={order._id || order.orderId}
+                              className="rounded-2xl border border-gray-200/90 bg-white p-4 shadow-xs space-y-3"
+                            >
+                              <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                                <div>
+                                  <div className="font-mono font-bold text-xs text-gray-900">
+                                    {order.orderId}
+                                  </div>
+                                  <div className="text-[10px] text-gray-400 mt-0.5">
+                                    {formattedDate}
+                                  </div>
+                                </div>
+
+                                <div>
+                                  {isCompleted && (
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                                      <FiCheckCircle className="h-3 w-3" /> Completed
                                     </span>
-                                    <div className="font-mono text-[10px] text-gray-400 truncate max-w-[120px]">
-                                      {order.payment?.trxId}
-                                    </div>
-                                  </td>
-                                  <td className="px-5 py-3.5 font-bold font-mono text-gray-900">
-                                    ৳ {order.totalAmount?.toFixed(2)}
-                                  </td>
-                                  <td className="px-5 py-3.5">
-                                    {isCompleted && (
-                                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
-                                        <FiCheckCircle className="h-3 w-3" />
-                                        Completed
-                                      </span>
-                                    )}
-                                    {isPending && (
-                                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-700">
-                                        <FiClock className="h-3 w-3" />
-                                        Pending
-                                      </span>
-                                    )}
-                                    {isCancelled && (
-                                      <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-bold text-red-700">
-                                        <FiAlertCircle className="h-3 w-3" />
-                                        Cancelled
-                                      </span>
-                                    )}
-                                  </td>
-                                  <td className="px-5 py-3.5 text-right">
-                                    <button
-                                      type="button"
-                                      onClick={() => openOrderDetails(order)}
-                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-[11px] font-bold text-gray-800 transition-colors shadow-2xs cursor-pointer"
-                                    >
-                                      <FiEye className="h-3 w-3 text-(--primary)" />
-                                      <span>{isCompleted ? "View Key" : "Details"}</span>
-                                    </button>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
+                                  )}
+                                  {isPending && (
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                                      <FiClock className="h-3 w-3" /> Pending
+                                    </span>
+                                  )}
+                                  {isCancelled && (
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-700">
+                                      <FiAlertCircle className="h-3 w-3" /> Cancelled
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="text-xs space-y-1">
+                                {order.items?.map((it, idx) => (
+                                  <div key={idx} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg text-xs">
+                                    <span className="font-semibold text-gray-900 truncate max-w-[200px]">
+                                      {it.title}
+                                    </span>
+                                    <span className="text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
+                                      {it.duration}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+
+                              <div className="flex items-center justify-between text-xs pt-1">
+                                <div>
+                                  <span className="text-[10px] text-gray-400 block">Total Amount</span>
+                                  <span className="font-mono font-bold text-gray-950">৳ {order.totalAmount?.toFixed(2)}</span>
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => openOrderDetails(order)}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-(--primary) text-white font-bold text-xs shadow-2xs hover:bg-(--primary-hover) transition-all cursor-pointer"
+                                >
+                                  <FiEye className="h-3.5 w-3.5" />
+                                  <span>{isCompleted ? "View Key" : "Details"}</span>
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    </div>
+
+                      {/* Desktop Table View */}
+                      <div className="hidden md:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left text-xs text-gray-600">
+                            <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
+                              <tr>
+                                <th className="px-5 py-3">Order ID</th>
+                                <th className="px-5 py-3">Items</th>
+                                <th className="px-5 py-3">Payment</th>
+                                <th className="px-5 py-3">Total Amount</th>
+                                <th className="px-5 py-3">Status</th>
+                                <th className="px-5 py-3 text-right">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                              {orders.map((order) => {
+                                const isCompleted = order.orderStatus === "completed";
+                                const isPending = order.orderStatus === "pending";
+                                const isCancelled = order.orderStatus === "cancelled";
+
+                                return (
+                                  <tr key={order._id || order.orderId} className="hover:bg-gray-50/50">
+                                    <td className="px-5 py-3.5">
+                                      <div className="font-mono font-bold text-gray-900">
+                                        {order.orderId}
+                                      </div>
+                                      <div className="text-[10px] text-gray-400">
+                                        {order.createdAt
+                                          ? new Date(order.createdAt).toLocaleDateString("en-GB", {
+                                              day: "numeric",
+                                              month: "short",
+                                              year: "numeric",
+                                            })
+                                          : "N/A"}
+                                      </div>
+                                    </td>
+                                    <td className="px-5 py-3.5 font-semibold text-gray-900">
+                                      {order.items?.map((it, idx) => (
+                                        <div key={idx} className="truncate max-w-xs">
+                                          {it.title} ({it.duration})
+                                        </div>
+                                      ))}
+                                    </td>
+                                    <td className="px-5 py-3.5">
+                                      <span className="font-bold uppercase text-gray-800">
+                                        {order.payment?.method}
+                                      </span>
+                                      <div className="font-mono text-[10px] text-gray-400 truncate max-w-[120px]">
+                                        {order.payment?.trxId}
+                                      </div>
+                                    </td>
+                                    <td className="px-5 py-3.5 font-bold font-mono text-gray-900">
+                                      ৳ {order.totalAmount?.toFixed(2)}
+                                    </td>
+                                    <td className="px-5 py-3.5">
+                                      {isCompleted && (
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
+                                          <FiCheckCircle className="h-3 w-3" />
+                                          Completed
+                                        </span>
+                                      )}
+                                      {isPending && (
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-700">
+                                          <FiClock className="h-3 w-3" />
+                                          Pending
+                                        </span>
+                                      )}
+                                      {isCancelled && (
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-bold text-red-700">
+                                          <FiAlertCircle className="h-3 w-3" />
+                                          Cancelled
+                                        </span>
+                                      )}
+                                    </td>
+                                    <td className="px-5 py-3.5 text-right">
+                                      <button
+                                        type="button"
+                                        onClick={() => openOrderDetails(order)}
+                                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-[11px] font-bold text-gray-800 transition-colors shadow-2xs cursor-pointer"
+                                      >
+                                        <FiEye className="h-3 w-3 text-(--primary)" />
+                                        <span>{isCompleted ? "View Key" : "Details"}</span>
+                                      </button>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </>
                   )}
                 </div>
               )}

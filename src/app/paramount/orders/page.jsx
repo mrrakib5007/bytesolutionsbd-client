@@ -182,174 +182,310 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      {/* Orders Table */}
-      <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
-        {loading ? (
-          <div className="p-16 text-center">
-            <LuLoader className="h-7 w-7 animate-spin mx-auto text-(--primary)" />
-            <p className="mt-2 text-xs font-medium text-gray-500">Loading orders...</p>
+      {/* Orders Container: Mobile Cards (< md) + Desktop Table (>= md) */}
+      {loading ? (
+        <div className="rounded-2xl border border-gray-200 bg-white p-16 text-center shadow-xs">
+          <LuLoader className="h-7 w-7 animate-spin mx-auto text-(--primary)" />
+          <p className="mt-2 text-xs font-medium text-gray-500">Loading orders...</p>
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="rounded-2xl border border-gray-200 bg-white p-16 text-center space-y-3 shadow-xs">
+          <div className="inline-flex p-3 rounded-2xl bg-gray-50 border border-gray-200 text-gray-400">
+            <FiShoppingBag className="h-7 w-7" />
           </div>
-        ) : orders.length === 0 ? (
-          <div className="p-16 text-center space-y-3">
-            <div className="inline-flex p-3 rounded-2xl bg-gray-50 border border-gray-200 text-gray-400">
-              <FiShoppingBag className="h-7 w-7" />
+          <h3 className="text-sm font-bold text-gray-900">No Orders Found</h3>
+          <p className="text-xs text-gray-500 max-w-sm mx-auto">
+            There are currently no orders matching your selected status filter or search query.
+          </p>
+        </div>
+      ) : (
+        <>
+          {/* Mobile Card View (Zero horizontal scrolling on mobile) */}
+          <div className="block md:hidden space-y-3.5">
+            {orders.map((order) => {
+              const isCompleted = order.orderStatus === "completed";
+              const isPending = order.orderStatus === "pending";
+              const isCancelled = order.orderStatus === "cancelled";
+
+              const formattedDate = order.createdAt
+                ? new Date(order.createdAt).toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "N/A";
+
+              return (
+                <div
+                  key={order._id}
+                  className="rounded-2xl border border-gray-200/90 bg-white p-4 shadow-xs space-y-3"
+                >
+                  {/* Card Header: Order ID + Status */}
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
+                    <div>
+                      <div className="font-mono font-bold text-xs text-gray-900">
+                        {order.orderId}
+                      </div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">
+                        {formattedDate}
+                      </div>
+                    </div>
+
+                    <div>
+                      {isCompleted && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                          <FiCheckCircle className="h-3 w-3" />
+                          Completed
+                        </span>
+                      )}
+                      {isPending && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                          <FiClock className="h-3 w-3" />
+                          Pending
+                        </span>
+                      )}
+                      {isCancelled && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-700">
+                          <FiAlertCircle className="h-3 w-3" />
+                          Cancelled
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Customer Info */}
+                  <div className="text-xs space-y-0.5">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
+                      Customer
+                    </span>
+                    <p className="font-bold text-gray-900">{order.customer?.name}</p>
+                    <p className="text-[11px] text-gray-500 truncate">{order.customer?.email}</p>
+                    {order.customer?.whatsapp && (
+                      <p className="text-[11px] font-mono text-emerald-700">
+                        {order.customer.whatsapp}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Ordered Items */}
+                  <div className="text-xs space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
+                      Products
+                    </span>
+                    <div className="space-y-1">
+                      {order.items?.map((it, idx) => (
+                        <div key={idx} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg text-xs">
+                          <span className="font-medium text-gray-900 truncate max-w-[200px]">
+                            {it.title}
+                          </span>
+                          <span className="font-mono text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
+                            {it.duration} × {it.quantity}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Payment Verification Box */}
+                  <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">Method:</span>
+                      <span className="font-bold uppercase text-gray-900">{order.payment?.method}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">TrxID:</span>
+                      <span className="font-mono font-bold text-emerald-700">{order.payment?.trxId}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">Sender:</span>
+                      <span className="font-mono text-gray-800">{order.payment?.senderNumber}</span>
+                    </div>
+                    <div className="flex items-center justify-between border-t border-gray-200 pt-1.5 font-bold">
+                      <span className="text-gray-700">Total:</span>
+                      <span className="font-mono text-sm text-gray-950">৳ {order.totalAmount?.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center justify-end gap-2 pt-1 border-t border-gray-100">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenFulfill(order)}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-(--primary) hover:bg-(--primary-hover) text-xs font-bold text-white shadow-2xs transition-all cursor-pointer"
+                    >
+                      <FiKey className="h-3.5 w-3.5" />
+                      <span>{isCompleted ? "Edit License" : "Deliver / Approve"}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteOrder(order._id)}
+                      className="p-2 rounded-xl border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer"
+                      title="Delete Order"
+                    >
+                      <FiTrash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden md:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-gray-600">
+                <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
+                  <tr>
+                    <th className="px-5 py-3.5">Order ID & Date</th>
+                    <th className="px-5 py-3.5">Customer</th>
+                    <th className="px-5 py-3.5">Items</th>
+                    <th className="px-5 py-3.5">Payment Verification</th>
+                    <th className="px-5 py-3.5">Amount</th>
+                    <th className="px-5 py-3.5">Status</th>
+                    <th className="px-5 py-3.5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {orders.map((order) => {
+                    const isCompleted = order.orderStatus === "completed";
+                    const isPending = order.orderStatus === "pending";
+                    const isCancelled = order.orderStatus === "cancelled";
+
+                    const formattedDate = order.createdAt
+                      ? new Date(order.createdAt).toLocaleDateString("en-GB", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : "N/A";
+
+                    return (
+                      <tr key={order._id} className="hover:bg-gray-50/60 transition-colors">
+                        {/* Order ID & Date */}
+                        <td className="px-5 py-3.5">
+                          <div className="font-mono font-bold text-gray-900">
+                            {order.orderId}
+                          </div>
+                          <div className="text-[11px] text-gray-400">
+                            {formattedDate}
+                          </div>
+                        </td>
+
+                        {/* Customer */}
+                        <td className="px-5 py-3.5">
+                          <div className="font-bold text-gray-900 truncate max-w-[150px]">
+                            {order.customer?.name}
+                          </div>
+                          <div className="text-[11px] text-gray-500 truncate max-w-[150px]">
+                            {order.customer?.email}
+                          </div>
+                          <div className="font-mono text-[10px] text-gray-400">
+                            {order.customer?.whatsapp || ""}
+                          </div>
+                        </td>
+
+                        {/* Items */}
+                        <td className="px-5 py-3.5">
+                          <div className="space-y-1">
+                            {order.items?.map((it, idx) => (
+                              <div key={idx} className="flex items-center gap-1.5 text-xs text-gray-800">
+                                <span className="font-medium truncate max-w-[160px]">
+                                  {it.title}
+                                </span>
+                                <span className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-mono">
+                                  {it.duration}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </td>
+
+                        {/* Payment Verification */}
+                        <td className="px-5 py-3.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-bold uppercase text-gray-900">
+                              {order.payment?.method}
+                            </span>
+                            <span
+                              className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                                order.payment?.status === "verified"
+                                  ? "bg-emerald-50 text-emerald-700"
+                                  : "bg-amber-50 text-amber-700"
+                              }`}
+                            >
+                              {order.payment?.status === "verified" ? "Verified" : "Unverified"}
+                            </span>
+                          </div>
+                          <div className="font-mono text-[11px] font-bold text-emerald-700 mt-0.5">
+                            TrxID: {order.payment?.trxId}
+                          </div>
+                          <div className="font-mono text-[10px] text-gray-400">
+                            From: {order.payment?.senderNumber}
+                          </div>
+                        </td>
+
+                        {/* Total Amount */}
+                        <td className="px-5 py-3.5 font-bold font-mono text-gray-950">
+                          ৳ {order.totalAmount?.toFixed(2)}
+                        </td>
+
+                        {/* Status */}
+                        <td className="px-5 py-3.5">
+                          {isCompleted && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
+                              <FiCheckCircle className="h-3 w-3" />
+                              Completed
+                            </span>
+                          )}
+                          {isPending && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-700">
+                              <FiClock className="h-3 w-3" />
+                              Pending
+                            </span>
+                          )}
+                          {isCancelled && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-bold text-red-700">
+                              <FiAlertCircle className="h-3 w-3" />
+                              Cancelled
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Actions */}
+                        <td className="px-5 py-3.5 text-right">
+                          <div className="inline-flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenFulfill(order)}
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-(--primary) hover:bg-(--primary-hover) text-[11px] font-bold text-white shadow-2xs transition-all cursor-pointer"
+                              title="Manage & Deliver License"
+                            >
+                              <FiKey className="h-3 w-3" />
+                              <span>{isCompleted ? "Edit License" : "Deliver"}</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteOrder(order._id)}
+                              className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer"
+                              title="Delete Order"
+                            >
+                              <FiTrash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-            <h3 className="text-sm font-bold text-gray-900">No Orders Found</h3>
-            <p className="text-xs text-gray-500 max-w-sm mx-auto">
-              There are currently no orders matching your selected status filter or search query.
-            </p>
           </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-gray-600">
-              <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
-                <tr>
-                  <th className="px-5 py-3.5">Order ID & Date</th>
-                  <th className="px-5 py-3.5">Customer</th>
-                  <th className="px-5 py-3.5">Items</th>
-                  <th className="px-5 py-3.5">Payment Verification</th>
-                  <th className="px-5 py-3.5">Amount</th>
-                  <th className="px-5 py-3.5">Status</th>
-                  <th className="px-5 py-3.5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {orders.map((order) => {
-                  const isCompleted = order.orderStatus === "completed";
-                  const isPending = order.orderStatus === "pending";
-                  const isCancelled = order.orderStatus === "cancelled";
-
-                  const formattedDate = order.createdAt
-                    ? new Date(order.createdAt).toLocaleDateString("en-GB", {
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      })
-                    : "N/A";
-
-                  return (
-                    <tr key={order._id} className="hover:bg-gray-50/60 transition-colors">
-                      {/* Order ID & Date */}
-                      <td className="px-5 py-3.5">
-                        <div className="font-mono font-bold text-gray-900">
-                          {order.orderId}
-                        </div>
-                        <div className="text-[11px] text-gray-400">
-                          {formattedDate}
-                        </div>
-                      </td>
-
-                      {/* Customer */}
-                      <td className="px-5 py-3.5">
-                        <div className="font-bold text-gray-900 truncate max-w-[150px]">
-                          {order.customer?.name}
-                        </div>
-                        <div className="text-[11px] text-gray-500 truncate max-w-[150px]">
-                          {order.customer?.email}
-                        </div>
-                        <div className="font-mono text-[10px] text-gray-400">
-                          {order.customer?.whatsapp || ""}
-                        </div>
-                      </td>
-
-                      {/* Items */}
-                      <td className="px-5 py-3.5">
-                        <div className="space-y-1">
-                          {order.items?.map((it, idx) => (
-                            <div key={idx} className="flex items-center gap-1.5 text-xs text-gray-800">
-                              <span className="font-medium truncate max-w-[160px]">
-                                {it.title}
-                              </span>
-                              <span className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-mono">
-                                {it.duration}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </td>
-
-                      {/* Payment Verification */}
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-bold uppercase text-gray-900">
-                            {order.payment?.method}
-                          </span>
-                          <span
-                            className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
-                              order.payment?.status === "verified"
-                                ? "bg-emerald-50 text-emerald-700"
-                                : "bg-amber-50 text-amber-700"
-                            }`}
-                          >
-                            {order.payment?.status === "verified" ? "Verified" : "Unverified"}
-                          </span>
-                        </div>
-                        <div className="font-mono text-[11px] font-bold text-emerald-700 mt-0.5">
-                          TrxID: {order.payment?.trxId}
-                        </div>
-                        <div className="font-mono text-[10px] text-gray-400">
-                          From: {order.payment?.senderNumber}
-                        </div>
-                      </td>
-
-                      {/* Total Amount */}
-                      <td className="px-5 py-3.5 font-bold font-mono text-gray-950">
-                        ৳ {order.totalAmount?.toFixed(2)}
-                      </td>
-
-                      {/* Status */}
-                      <td className="px-5 py-3.5">
-                        {isCompleted && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
-                            <FiCheckCircle className="h-3 w-3" />
-                            Completed
-                          </span>
-                        )}
-                        {isPending && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-700">
-                            <FiClock className="h-3 w-3" />
-                            Pending
-                          </span>
-                        )}
-                        {isCancelled && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-bold text-red-700">
-                            <FiAlertCircle className="h-3 w-3" />
-                            Cancelled
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Actions */}
-                      <td className="px-5 py-3.5 text-right">
-                        <div className="inline-flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => handleOpenFulfill(order)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-(--primary) hover:bg-(--primary-hover) text-[11px] font-bold text-white shadow-2xs transition-all cursor-pointer"
-                            title="Manage & Deliver License"
-                          >
-                            <FiKey className="h-3 w-3" />
-                            <span>{isCompleted ? "Edit License" : "Deliver"}</span>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteOrder(order._id)}
-                            className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer"
-                            title="Delete Order"
-                          >
-                            <FiTrash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+        </>
+      )}
 
       {/* Order Fulfill & Delivery Modal */}
       {isModalOpen && selectedOrder && (

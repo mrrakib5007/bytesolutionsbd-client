@@ -76,7 +76,7 @@ export default function OrderFulfillModal({ isOpen, onClose, order, onOrderUpdat
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
-      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-6 sm:p-7 shadow-2xl border border-gray-100 space-y-6">
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto slim-scrollbar rounded-3xl bg-white p-6 sm:p-7 shadow-2xl border border-gray-100 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 pb-4">
           <div>

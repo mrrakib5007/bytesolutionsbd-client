@@ -141,7 +141,7 @@ export default function EditProfileModal({ isOpen, onClose }) {
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl transition-all border border-gray-100 z-10">
+      <div className="relative w-full max-w-md max-h-[92vh] overflow-y-auto slim-scrollbar rounded-3xl bg-white shadow-2xl transition-all border border-gray-100 z-10">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <div>

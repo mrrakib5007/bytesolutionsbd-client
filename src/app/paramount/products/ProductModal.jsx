@@ -308,7 +308,7 @@ function ProductForm({ product, onClose, onSuccess }) {
       </div>
 
       {/* Scrollable Form Body */}
-      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6 slim-scrollbar">
         {formError && (
           <div className="flex items-center gap-2 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs font-semibold text-rose-700">
             <FiAlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
