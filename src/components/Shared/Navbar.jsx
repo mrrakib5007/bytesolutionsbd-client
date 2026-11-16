@@ -452,22 +452,14 @@ export default function Navbar() {
           </div>
         )}
 
-        <div className="border-t border-gray-100 p-5">
-          <div className="mb-3 flex items-center justify-between text-sm font-semibold text-black">
-            <span>Subtotal</span>
-            <span className="text-base font-extrabold text-gray-900">
-              ৳{subtotal.toFixed(2)}
-            </span>
-          </div>
-          {cartItems.length === 0 ? (
-            <button
-              type="button"
-              disabled
-              className="w-full rounded-xl bg-gray-200 py-3 text-center text-sm font-semibold text-gray-400 cursor-not-allowed"
-            >
-              Checkout
-            </button>
-          ) : (
+        {cartItems.length > 0 && (
+          <div className="border-t border-gray-100 p-5">
+            <div className="mb-3 flex items-center justify-between text-sm font-semibold text-black">
+              <span>Subtotal</span>
+              <span className="text-base font-extrabold text-gray-900">
+                ৳{subtotal.toFixed(2)}
+              </span>
+            </div>
             <Link
               href="/checkout"
               onClick={() => setIsCartOpen(false)}
@@ -475,8 +467,8 @@ export default function Navbar() {
             >
               Proceed to Checkout
             </Link>
-          )}
-        </div>
+          </div>
+        )}
       </aside>
     </>
   );
