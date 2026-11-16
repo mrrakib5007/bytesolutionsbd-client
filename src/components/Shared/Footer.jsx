@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import CurrentYear from "./CurrentYear";
+import Logo from "./Logo";
 import {
   FiFacebook,
   FiTwitter,
@@ -40,24 +41,7 @@ export default function Footer() {
       <div className="mx-auto max-w-[95%] px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <Link href="/" className="inline-flex items-center gap-2.5">
-              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg">
-                <Image
-                  src="/logo.png"
-                  alt="Soft License Hub Logo"
-                  width={40}
-                  height={40}
-                  className="h-full w-full object-contain"
-                />
-              </div>
-              <span className="text-xl font-black tracking-tight text-black [text-shadow:0_0_1px_rgba(0,0,0,0.5)]">
-                Soft{" "}
-                <span className="gradient-text [text-shadow:0_0_1px_var(--primary)]">
-                  License
-                </span>{" "}
-                Hub
-              </span>
-            </Link>
+            <Logo size="md" />
 
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-gray-600">
               Smart Digital Solutions. Trusted Software. Genuine licenses, tools

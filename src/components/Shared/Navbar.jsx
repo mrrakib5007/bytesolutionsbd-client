@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthContext";
+import Logo from "@/components/Shared/Logo";
 import {
   FiMenu,
   FiX,
@@ -65,25 +66,7 @@ export default function Navbar() {
       <header className="sticky top-0 z-40 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md">
         <nav className="mx-auto flex h-16 max-w-[95%] items-center justify-between px-2 sm:px-4">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center gap-2.5 py-1">
-              <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg">
-                <Image
-                  src="/logo.png"
-                  alt="Soft License Hub Logo"
-                  width={40}
-                  height={40}
-                  priority
-                  className="h-full w-full object-contain"
-                />
-              </div>
-              <span className="text-base md:text-lg lg:text-xl font-black tracking-tight text-black [text-shadow:0_0_1px_rgba(0,0,0,0.5)]">
-                Soft{" "}
-                <span className="gradient-text [text-shadow:0_0_1px_var(--primary)]">
-                  License
-                </span>{" "}
-                Hub
-              </span>
-            </Link>
+            <Logo priority className="py-1" />
           </div>
 
           <ul className="hidden items-center gap-7 lg:flex">
@@ -224,28 +207,7 @@ export default function Navbar() {
         }`}
       >
         <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-          <Link
-            href="/"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="flex items-center gap-2.5"
-          >
-            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg">
-              <Image
-                src="/logo.png"
-                alt="Soft License Hub Logo"
-                width={36}
-                height={36}
-                className="h-full w-full object-contain"
-              />
-            </div>
-            <span className="text-lg font-black tracking-tight text-black [text-shadow:0_0_1px_rgba(0,0,0,0.5)]">
-              Soft{" "}
-              <span className="gradient-text [text-shadow:0_0_1px_var(--primary)]">
-                License
-              </span>{" "}
-              Hub
-            </span>
-          </Link>
+          <Logo size="sm" onClick={() => setIsMobileMenuOpen(false)} />
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(false)}

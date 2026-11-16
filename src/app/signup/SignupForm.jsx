@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthContext";
+import Logo from "@/components/Shared/Logo";
 import {
   FiUser,
   FiMail,
@@ -291,7 +292,8 @@ export default function SignupForm() {
         {/* Card Container */}
         <div className="overflow-hidden rounded-3xl border border-gray-100 bg-white p-7 shadow-xl shadow-gray-200/50 sm:p-10">
           {/* Header */}
-          <div className="text-center">
+          <div className="text-center flex flex-col items-center">
+            <Logo size="md" className="mb-4" />
             <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
               Create an account
             </h1>

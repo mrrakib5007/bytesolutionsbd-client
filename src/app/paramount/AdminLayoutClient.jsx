@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import RoleGuard from "@/components/Auth/RoleGuard";
 import { useAuth } from "@/context/AuthContext";
+import Logo from "@/components/Shared/Logo";
 import {
   FiGrid,
   FiShoppingBag,
@@ -73,19 +74,16 @@ export default function AdminLayoutClient({ children }) {
         >
           {/* Brand Header */}
           <div className="h-16 shrink-0 flex items-center justify-between px-6 border-b border-gray-200/80">
-            <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-(--primary) text-white font-black text-lg shadow-sm shadow-(--primary)/30">
-                S
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-gray-900 tracking-tight">
-                  SoftLicense<span className="text-(--primary)">Hub</span>
+            <Logo
+              href="/paramount"
+              size="sm"
+              textClassName="text-sm font-bold text-gray-900"
+              subtitle={
+                <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-700 uppercase tracking-widest mt-0.5">
+                  <FiShield className="h-2.5 w-2.5 text-emerald-600" /> Paramount Console
                 </span>
-                <span className="text-[10px] font-semibold text-emerald-700 uppercase tracking-widest flex items-center gap-1">
-                  <FiShield className="h-2.5 w-2.5 text-emerald-600" /> Admin Panel
-                </span>
-              </div>
-            </Link>
+              }
+            />
 
             <button
               type="button"
