@@ -1,26 +1,51 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import { useAuth } from "@/context/AuthContext";
 import {
   FiMenu,
   FiX,
   FiShoppingCart,
   FiLogIn,
   FiUserPlus,
+  FiLogOut,
 } from "react-icons/fi";
 
 export default function Navbar() {
+  const { user, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const profileDropdownRef = useRef(null);
+
+  const DEFAULT_IMAGE = "https://i.ibb.co.com/ycfgs7BG/profile.jpg";
 
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "All Products", href: "/products" },
     { name: "Special Offers", href: "/special-offers" },
     { name: "Best Sellers", href: "/best-sellers" },
+    { name: "Downloads", href: "/downloads" },
   ];
+
+  // Close profile dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(event.target)
+      ) {
+        setIsProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     if (isMobileMenuOpen || isCartOpen) {
@@ -85,13 +110,70 @@ export default function Navbar() {
               </span>
             </button>
 
-            <Link
-              href="/login"
-              className="hidden items-center gap-2 rounded-lg bg-(--primary) px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-200 hover:bg-(--primary-hover) active:scale-95 lg:inline-flex"
-            >
-              <FiLogIn className="h-3.5 w-3.5" />
-              <span>Login</span>
-            </Link>
+            {user ? (
+              <div className="relative hidden lg:block" ref={profileDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsProfileOpen((prev) => !prev)}
+                  className="flex items-center gap-2 rounded-full p-0.5 transition-all hover:ring-2 hover:ring-(--primary)/30 focus:outline-none cursor-pointer"
+                  aria-label="User profile menu"
+                >
+                  <div className="relative h-9 w-9 overflow-hidden rounded-full border border-gray-200">
+                    <Image
+                      src={user.image || DEFAULT_IMAGE}
+                      alt={user.name || "User"}
+                      fill
+                      sizes="36px"
+                      className="object-cover"
+                    />
+                  </div>
+                </button>
+
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-gray-100 bg-white p-2 shadow-xl shadow-gray-200/50 z-50">
+                    <div className="border-b border-gray-100 px-3 py-2.5">
+                      <p className="text-xs font-bold text-gray-900 truncate">
+                        {user.name}
+                      </p>
+                      <p className="text-[11px] text-gray-500 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setIsProfileOpen(false);
+                        await logout();
+                        toast.success("Logged out successfully");
+                      }}
+                      className="mt-1 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50 cursor-pointer"
+                    >
+                      <FiLogOut className="h-4 w-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="hidden items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-800 shadow-2xs transition-all duration-200 hover:border-(--primary) hover:text-(--primary) active:scale-95 lg:inline-flex"
+                >
+                  <FiLogIn className="h-3.5 w-3.5" />
+                  <span>Login</span>
+                </Link>
+
+                <Link
+                  href="/signup"
+                  className="hidden items-center gap-1.5 rounded-lg bg-(--primary) px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-all duration-200 hover:bg-(--primary-hover) active:scale-95 lg:inline-flex"
+                >
+                  <FiUserPlus className="h-3.5 w-3.5" />
+                  <span>Sign Up</span>
+                </Link>
+              </>
+            )}
 
             <button
               type="button"
@@ -166,23 +248,60 @@ export default function Navbar() {
           </ul>
         </nav>
 
-        <div className="flex flex-col gap-3 border-t border-gray-100 p-5">
-          <Link
-            href="/login"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-(--primary) py-2.5 text-center text-base font-semibold text-white transition-colors hover:bg-(--primary-hover)"
-          >
-            <FiLogIn className="h-5 w-5" />
-            <span>Login</span>
-          </Link>
-          <Link
-            href="/register"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white py-2.5 text-center text-base font-semibold text-black transition-colors hover:bg-gray-50 hover:text-(--primary)"
-          >
-            <FiUserPlus className="h-5 w-5" />
-            <span>Sign Up</span>
-          </Link>
+        <div className="border-t border-gray-100 p-5">
+          {user ? (
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-gray-200">
+                  <Image
+                    src={user.image || DEFAULT_IMAGE}
+                    alt={user.name || "User"}
+                    fill
+                    sizes="44px"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-sm font-bold text-gray-900 truncate">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  setIsMobileMenuOpen(false);
+                  await logout();
+                  toast.success("Logged out successfully");
+                }}
+                className="mt-1 flex w-full items-center justify-center gap-2 rounded-lg bg-red-50 py-2.5 text-center text-sm font-semibold text-red-600 transition-colors hover:bg-red-100 cursor-pointer"
+              >
+                <FiLogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              <Link
+                href="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-(--primary) py-2.5 text-center text-base font-semibold text-white transition-colors hover:bg-(--primary-hover)"
+              >
+                <FiLogIn className="h-5 w-5" />
+                <span>Login</span>
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white py-2.5 text-center text-base font-semibold text-black transition-colors hover:bg-gray-50 hover:text-(--primary)"
+              >
+                <FiUserPlus className="h-5 w-5" />
+                <span>Sign Up</span>
+              </Link>
+            </div>
+          )}
         </div>
       </aside>
 

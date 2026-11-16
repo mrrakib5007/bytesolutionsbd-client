@@ -161,21 +161,7 @@ export default function ProductDetailsPageClient({ product }) {
                 Buy Now
               </button>
             </div>
-
-            <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <div className="flex items-center gap-2 rounded-xl bg-slate-50 px-3.5 py-2.5 text-xs font-medium text-slate-700">
-                <FiDownload className="h-4 w-4 shrink-0 text-(--primary)" />
-                <span>Instant download</span>
-              </div>
-              <div className="flex items-center gap-2 rounded-xl bg-slate-50 px-3.5 py-2.5 text-xs font-medium text-slate-700">
-                <FiShield className="h-4 w-4 shrink-0 text-(--primary)" />
-                <span>Secure checkout</span>
-              </div>
-              <div className="flex items-center gap-2 rounded-xl bg-slate-50 px-3.5 py-2.5 text-xs font-medium text-slate-700">
-                <FiRefreshCw className="h-4 w-4 shrink-0 text-(--primary)" />
-                <span>Refund policy</span>
-              </div>
-            </div>
+            
           </div>
         </div>
 

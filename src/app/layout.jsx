@@ -2,6 +2,8 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Shared/Navbar";
 import { Toaster } from "react-hot-toast";
+import Footer from "@/components/Shared/Footer";
+import { AuthProvider } from "@/context/AuthContext";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -93,11 +95,18 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       className={`${plusJakartaSans.variable} ${plusJakartaSans.className} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-(--primary)/5">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Toaster />
+      <body
+        className="min-h-full flex flex-col bg-(--primary)/5"
+        suppressHydrationWarning
+      >
+        <AuthProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Toaster />
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );
