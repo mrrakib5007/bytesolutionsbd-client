@@ -2,6 +2,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/context/AuthContext";
+import { CartProvider } from "@/context/CartContext";
 import LayoutShell from "@/components/Shared/LayoutShell";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -101,8 +102,10 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
       >
         <AuthProvider>
-          <LayoutShell>{children}</LayoutShell>
-          <Toaster />
+          <CartProvider>
+            <LayoutShell>{children}</LayoutShell>
+            <Toaster />
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

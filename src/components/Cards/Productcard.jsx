@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import toast from "react-hot-toast";
 import { FiHeart, FiShoppingCart, FiStar } from "react-icons/fi";
+import { useCart } from "@/context/CartContext";
 
 const badgeStyles = {
   "best seller": "bg-amber-500",
@@ -18,16 +18,16 @@ const getBadgeStyle = (badge) =>
   badgeStyles[badge?.trim().toLowerCase()] || "bg-(--primary)";
 
 export default function ProductCard({ product }) {
+  const { addToCart } = useCart();
   const defaultVariant = product.variants?.[0] || {
     id: 1,
-    duration: "",
+    duration: "Standard",
     price: 0,
     originalPrice: null,
   };
 
   const handleAddToCart = () => {
-    console.log(product._id);
-    toast.success(`${product.title} added to cart`);
+    addToCart(product, defaultVariant, 1);
   };
 
   return (

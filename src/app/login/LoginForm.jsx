@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "@/components/Shared/Logo";
@@ -17,6 +17,8 @@ import { LuLoader } from "react-icons/lu";
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTarget = searchParams.get("redirect") || "/";
   const { login } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -109,7 +111,7 @@ export default function LoginForm() {
         });
         setTouched({});
         setErrors({});
-        router.push("/");
+        router.push(redirectTarget);
       } else {
         toast.error(res.message || "Invalid email or password.");
       }

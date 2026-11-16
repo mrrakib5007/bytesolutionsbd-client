@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import LoginForm from "./LoginForm";
+import Loading from "@/components/Loading";
 
 export const metadata = {
   title: "Login - Soft License Hub",
@@ -7,5 +9,15 @@ export const metadata = {
 };
 
 export default function LoginPage() {
-  return <LoginForm />;
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <Loading text="Loading login..." />
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
+  );
 }

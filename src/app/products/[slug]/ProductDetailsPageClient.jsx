@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext";
 import {
   FiStar,
   FiDownload,
@@ -11,13 +13,25 @@ import {
   FiMinus,
   FiPlus,
   FiCheckCircle,
+  FiShoppingCart,
 } from "react-icons/fi";
 
 export default function ProductDetailsPageClient({ product }) {
+  const router = useRouter();
+  const { addToCart } = useCart();
   const [selectedVariant, setSelectedVariant] = useState(
     product.variants?.[0] || null
   );
   const [quantity, setQuantity] = useState(1);
+
+  const handleAddToCart = () => {
+    addToCart(product, selectedVariant, quantity);
+  };
+
+  const handleBuyNow = () => {
+    addToCart(product, selectedVariant, quantity);
+    router.push("/checkout");
+  };
 
   return (
     <div className="min-h-screen bg-white text-slate-800">
@@ -152,14 +166,17 @@ export default function ProductDetailsPageClient({ product }) {
 
               <button
                 type="button"
-                className="flex h-11 w-full items-center justify-center rounded-xl border border-(--primary) bg-white px-6 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-50 active:scale-98 sm:w-auto"
+                onClick={handleAddToCart}
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-(--primary) bg-white px-6 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-50 active:scale-98 sm:w-auto cursor-pointer"
               >
-                Add to Cart
+                <FiShoppingCart className="h-4 w-4" />
+                <span>Add to Cart</span>
               </button>
 
               <button
                 type="button"
-                className="flex h-11 w-full items-center justify-center rounded-xl bg-(--primary) px-7 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-emerald-700 active:scale-98 sm:w-auto"
+                onClick={handleBuyNow}
+                className="flex h-11 w-full items-center justify-center rounded-xl bg-(--primary) px-7 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-(--primary-hover) active:scale-98 sm:w-auto cursor-pointer"
               >
                 Buy Now
               </button>

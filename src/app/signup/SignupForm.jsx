@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthContext";
 import Logo from "@/components/Shared/Logo";
@@ -104,6 +104,8 @@ const COUNTRY_CODES = Object.keys(COUNTRY_CONFIGS);
 
 export default function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTarget = searchParams.get("redirect") || "/";
   const { signup } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -275,7 +277,7 @@ export default function SignupForm() {
         });
         setTouched({});
         setErrors({});
-        router.push("/");
+        router.push(redirectTarget);
       } else {
         toast.error(res.message || "Failed to register. Please try again.");
       }
