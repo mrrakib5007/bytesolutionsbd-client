@@ -55,9 +55,12 @@ export default function ProductDetailsPageClient({ product }) {
           </div>
 
           <div className="flex flex-col lg:col-span-6">
-            <span className="text-sm font-semibold text-(--primary)">
+            <Link
+              href={`/products?category=${encodeURIComponent(product.category || "")}`}
+              className="text-sm font-semibold text-(--primary) hover:underline w-fit"
+            >
               {product.category}
-            </span>
+            </Link>
 
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
               {product.title}

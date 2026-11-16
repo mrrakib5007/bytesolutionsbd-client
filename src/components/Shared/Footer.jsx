@@ -13,12 +13,12 @@ import { FaFacebookF, FaWhatsapp, FaYoutube } from "react-icons/fa6";
 
 export default function Footer() {
   const categories = [
-    { name: "Software & Utilities", href: "/category/software-utilities" },
-    { name: "Productivity Tools", href: "/category/productivity-tools" },
-    { name: "Developer Tools", href: "/category/developer-tools" },
-    { name: "WordPress Themes & Plugins", href: "/category/wordpress" },
-    { name: "Website Templates", href: "/category/templates" },
-    { name: "Design Resources", href: "/category/design" },
+    { name: "Software & Utilities", href: "/products?category=Software+%26+Apps" },
+    { name: "Productivity Tools", href: "/products?category=Office+%26+Productivity" },
+    { name: "Developer Tools", href: "/products?category=Developer+Tools" },
+    { name: "Marketing Tools", href: "/products?category=Marketing+Tools" },
+    { name: "Security & VPN", href: "/products?category=Security+%26+VPN" },
+    { name: "Design Resources", href: "/products?category=Design+%26+Creative" },
   ];
 
   const company = [
@@ -145,10 +145,10 @@ export default function Footer() {
                     Email:
                   </span>
                   <a
-                    href="mailto:mr8218101@gmail.com"
+                    href="mailto:softlicensehub1@gmail.com"
                     className="text-sm font-semibold text-gray-900 transition-colors hover:text-(--primary)"
                   >
-                    mr8218101@gmail.com
+                    softlicensehub1@gmail.com
                   </a>
                 </div>
               </div>

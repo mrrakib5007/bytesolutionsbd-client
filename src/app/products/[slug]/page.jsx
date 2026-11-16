@@ -1,23 +1,41 @@
 import { notFound } from "next/navigation";
 import ProductDetailsPageClient from "./ProductDetailsPageClient";
 
-const PRODUCTS_API =
-  "https://raw.githubusercontent.com/mrrakib5007/softlicensehub/main/public/products.json";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 async function getProducts() {
   try {
-    const res = await fetch(PRODUCTS_API, {
+    const res = await fetch(`${API_BASE_URL}/products`, {
       next: { revalidate: 60 },
     });
-
-    if (!res.ok) {
-      return null;
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        return data;
+      }
     }
-
-    return await res.json();
   } catch (error) {
-    return null;
+    console.error("Failed to fetch products list from API:", error);
   }
+  return [];
+}
+
+async function getProductBySlug(slug) {
+  try {
+    const res = await fetch(`${API_BASE_URL}/products/${slug}`, {
+      next: { revalidate: 60 },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.slug) {
+        return data;
+      }
+    }
+  } catch (error) {
+    console.error(`Failed to fetch product '${slug}' from API:`, error);
+  }
+  return null;
 }
 
 export async function generateStaticParams() {
@@ -31,34 +49,44 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const products = await getProducts();
-
-  if (!products) {
-    return {
-      title: "Product Not Found",
-    };
-  }
-
-  const product = products.find((item) => item.slug === slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     return {
       title: "Product Not Found",
+      description: "The requested software license or product could not be found.",
+      robots: { index: false, follow: false },
     };
   }
 
-  const title = `${product.title} - SoftLicenseHub`;
+  const title = `${product.title} - Genuine License Key`;
   const description =
     product.shortDescription ||
-    "Best software license deals and premium subscriptions.";
+    `Purchase genuine ${product.title} with instant delivery, verified license, and dedicated support at Soft License Hub.`;
+
+  const canonicalPath = `/products/${product.slug}`;
+  const lowestPrice = product.variants?.[0]?.price;
 
   return {
     title,
     description,
+    keywords: [
+      product.title,
+      product.category,
+      "software license",
+      "buy license bd",
+      "instant activation",
+      ...(product.features || []),
+    ],
+    alternates: {
+      canonical: canonicalPath,
+    },
     openGraph: {
-      title,
+      title: `${product.title} | Soft License Hub`,
       description,
-      type: "website",
+      url: `https://softlicensehub.com${canonicalPath}`,
+      siteName: "Soft License Hub",
+      type: "article",
       images: [
         {
           url: product.image,
@@ -70,22 +98,22 @@ export async function generateMetadata({ params }) {
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: `${product.title} | Soft License Hub`,
       description,
       images: [product.image],
     },
+    other: lowestPrice
+      ? {
+          "product:price:amount": String(lowestPrice),
+          "product:price:currency": "BDT",
+        }
+      : {},
   };
 }
 
 export default async function ProductDetailsPage({ params }) {
   const { slug } = await params;
-  const products = await getProducts();
-
-  if (!products) {
-    notFound();
-  }
-
-  const product = products.find((item) => item.slug === slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();

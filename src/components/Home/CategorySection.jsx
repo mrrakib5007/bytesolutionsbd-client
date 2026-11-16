@@ -20,63 +20,63 @@ const categories = [
     slug: "marketing-tools",
     title: "Marketing Tools",
     itemCount: "18+ Products",
-    href: "/categories/marketing-tools",
+    href: "/products?category=Marketing+Tools",
     icon: FiSend,
   },
   {
     slug: "software-apps",
     title: "Software & Apps",
     itemCount: "25+ Products",
-    href: "/categories/software-apps",
+    href: "/products?category=Software+%26+Apps",
     icon: FiGrid,
   },
   {
     slug: "ai-tools",
     title: "AI Tools",
     itemCount: "14+ Products",
-    href: "/categories/ai-tools",
+    href: "/products?category=AI+Tools",
     icon: FiCpu,
   },
   {
     slug: "security-vpn",
     title: "Security & VPN",
     itemCount: "12+ Products",
-    href: "/categories/security-vpn",
+    href: "/products?category=Security+%26+VPN",
     icon: FiShield,
   },
   {
     slug: "design-creative",
     title: "Design & Creative",
     itemCount: "25+ Products",
-    href: "/categories/design-creative",
+    href: "/products?category=Design+%26+Creative",
     icon: FiPenTool,
   },
   {
     slug: "office-productivity",
     title: "Office & Productivity",
     itemCount: "32+ Products",
-    href: "/categories/office-productivity",
+    href: "/products?category=Office+%26+Productivity",
     icon: FiBriefcase,
   },
   {
     slug: "developer-tools",
     title: "Developer Tools",
     itemCount: "16+ Products",
-    href: "/categories/developer-tools",
+    href: "/products?category=Developer+Tools",
     icon: FiCode,
   },
   {
     slug: "streaming-entertainment",
     title: "Streaming",
     itemCount: "20+ Products",
-    href: "/categories/streaming-entertainment",
+    href: "/products?category=Streaming",
     icon: FiTv,
   },
   {
     slug: "cloud-storage",
     title: "Cloud & Storage",
     itemCount: "10+ Products",
-    href: "/categories/cloud-storage",
+    href: "/products?category=Cloud+%26+Storage",
     icon: FiDatabase,
   },
 ];
@@ -128,7 +128,7 @@ export default function CategorySection() {
         {hasMoreCategories && (
           <div className="mt-8 flex justify-center sm:mt-10 lg:mt-12">
             <Link
-              href="/categories"
+              href="/products"
               className="group inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-neutral-800 shadow-xs transition-all duration-200 hover:border-(--primary) hover:text-(--primary) active:scale-95 sm:text-base"
             >
               <span>View All Categories</span>

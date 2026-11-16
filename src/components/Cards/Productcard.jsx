@@ -74,9 +74,12 @@ export default function ProductCard({ product }) {
 
         <div className="p-4 sm:p-5">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-xs font-semibold text-(--primary)">
+            <Link
+              href={`/products?category=${encodeURIComponent(product.category || "")}`}
+              className="text-xs font-semibold text-(--primary) hover:underline"
+            >
               {product.category}
-            </span>
+            </Link>
             {defaultVariant.duration && (
               <span className="rounded-md bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-600">
                 {defaultVariant.duration}
