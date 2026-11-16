@@ -306,9 +306,9 @@ export default function AdminOrdersPage() {
                         Ordered Products
                       </span>
                       {order.items?.map((it, idx) => (
-                        <div key={idx} className="flex items-center justify-between gap-1.5 bg-white border border-gray-200/80 p-2 rounded-lg text-xs">
-                          <span className="font-semibold text-gray-900 truncate">{it.title}</span>
-                          <span className="font-mono text-[10px] bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded text-gray-700 shrink-0 whitespace-nowrap">
+                        <div key={idx} className="flex flex-col items-start gap-1 bg-white border border-gray-200/80 p-2.5 rounded-lg text-xs">
+                          <span className="font-semibold text-gray-900 leading-snug">{it.title}</span>
+                          <span className="inline-flex items-center font-mono text-[10px] bg-gray-50 border border-gray-200 px-2 py-0.5 rounded text-gray-700 whitespace-nowrap">
                             {it.duration} × {it.quantity}
                           </span>
                         </div>
@@ -349,19 +349,28 @@ export default function AdminOrdersPage() {
             })}
           </div>
 
-          {/* Desktop Table View (>= xl: Large wide desktop screens only) */}
+          {/* Desktop Table View (>= xl: Large wide desktop screens only - zero right side scrolling) */}
           <div className="hidden xl:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-gray-600 border-collapse">
+            <div className="w-full overflow-hidden">
+              <table className="w-full text-left text-xs text-gray-600 border-collapse table-fixed">
+                <colgroup>
+                  <col className="w-[15%]" />
+                  <col className="w-[17%]" />
+                  <col className="w-[24%]" />
+                  <col className="w-[17%]" />
+                  <col className="w-[8%]" />
+                  <col className="w-[8%]" />
+                  <col className="w-[11%]" />
+                </colgroup>
                 <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                   <tr>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Order ID & Date</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Customer</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Items</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Payment Verification</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Amount</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Status</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap text-right">Actions</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Order ID & Date</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Customer</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Items</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Payment Verification</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Amount</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap">Status</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -381,37 +390,39 @@ export default function AdminOrdersPage() {
                     return (
                       <tr key={order._id} className="hover:bg-gray-50/60 transition-colors">
                         {/* Order ID & Date */}
-                        <td className="px-5 py-3.5 whitespace-nowrap">
-                          <div className="font-mono font-bold text-gray-900 whitespace-nowrap">
+                        <td className="px-4 py-3.5 whitespace-nowrap align-middle">
+                          <div className="font-mono font-bold text-gray-900 tracking-tight whitespace-nowrap truncate" title={order.orderId}>
                             {order.orderId}
                           </div>
-                          <div className="text-[11px] text-gray-400 whitespace-nowrap">
+                          <div className="text-[11px] text-gray-400 whitespace-nowrap mt-0.5">
                             {formattedDate}
                           </div>
                         </td>
 
                         {/* Customer */}
-                        <td className="px-5 py-3.5 whitespace-nowrap">
-                          <div className="font-bold text-gray-900">
+                        <td className="px-4 py-3.5 align-middle">
+                          <div className="font-bold text-gray-900 truncate" title={order.customer?.name}>
                             {order.customer?.name}
                           </div>
-                          <div className="text-[11px] text-gray-500">
+                          <div className="text-[11px] text-gray-500 truncate" title={order.customer?.email}>
                             {order.customer?.email}
                           </div>
-                          <div className="font-mono text-[10px] text-gray-400">
-                            {order.customer?.whatsapp || ""}
-                          </div>
+                          {order.customer?.whatsapp && (
+                            <div className="font-mono text-[10px] text-gray-400 truncate">
+                              {order.customer.whatsapp}
+                            </div>
+                          )}
                         </td>
 
-                        {/* Items */}
-                        <td className="px-5 py-3.5 whitespace-nowrap">
-                          <div className="space-y-1">
+                        {/* Items - 2 Lines: Product Name on Top, Duration × Qty Badge Underneath */}
+                        <td className="px-4 py-3.5 align-middle">
+                          <div className="space-y-1.5">
                             {order.items?.map((it, idx) => (
-                              <div key={idx} className="flex items-center gap-1.5 text-xs text-gray-800">
-                                <span className="font-medium">
+                              <div key={idx} className="flex flex-col items-start gap-0.5">
+                                <span className="font-semibold text-gray-900 leading-snug text-xs line-clamp-1" title={it.title}>
                                   {it.title}
                                 </span>
-                                <span className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-mono whitespace-nowrap">
+                                <span className="inline-flex items-center text-[10px] bg-gray-100 border border-gray-200/90 px-1.5 py-0.5 rounded text-gray-600 font-mono font-medium whitespace-nowrap">
                                   {it.duration} × {it.quantity}
                                 </span>
                               </div>
@@ -420,22 +431,22 @@ export default function AdminOrdersPage() {
                         </td>
 
                         {/* Payment Verification */}
-                        <td className="px-5 py-3.5 whitespace-nowrap">
+                        <td className="px-4 py-3.5 whitespace-nowrap align-middle">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-bold uppercase text-gray-900">
+                            <span className="font-bold uppercase text-gray-900 text-[11px]">
                               {order.payment?.method}
                             </span>
                             <span
                               className={`text-[9px] font-bold px-1.5 py-0.2 rounded whitespace-nowrap ${
                                 order.payment?.status === "verified"
-                                  ? "bg-emerald-50 text-emerald-700"
-                                  : "bg-amber-50 text-amber-700"
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                                  : "bg-amber-50 text-amber-700 border border-amber-200/60"
                               }`}
                             >
                               {order.payment?.status === "verified" ? "Verified" : "Unverified"}
                             </span>
                           </div>
-                          <div className="font-mono text-[11px] font-bold text-emerald-700 mt-0.5 whitespace-nowrap">
+                          <div className="font-mono text-[11px] font-bold text-emerald-700 mt-0.5 whitespace-nowrap truncate" title={order.payment?.trxId}>
                             TrxID: {order.payment?.trxId}
                           </div>
                           <div className="font-mono text-[10px] text-gray-400 whitespace-nowrap">
@@ -444,26 +455,26 @@ export default function AdminOrdersPage() {
                         </td>
 
                         {/* Total Amount */}
-                        <td className="px-5 py-3.5 font-bold font-mono text-gray-950 whitespace-nowrap">
+                        <td className="px-4 py-3.5 font-bold font-mono text-gray-950 whitespace-nowrap align-middle">
                           ৳ {order.totalAmount?.toFixed(2)}
                         </td>
 
                         {/* Status */}
-                        <td className="px-5 py-3.5 whitespace-nowrap">
+                        <td className="px-4 py-3.5 whitespace-nowrap align-middle">
                           {isCompleted && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 whitespace-nowrap">
                               <FiCheckCircle className="h-3 w-3" />
                               Completed
                             </span>
                           )}
                           {isPending && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-700 whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 text-[10px] font-bold text-amber-700 whitespace-nowrap">
                               <FiClock className="h-3 w-3" />
                               Pending
                             </span>
                           )}
                           {isCancelled && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-bold text-red-700 whitespace-nowrap">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 border border-red-200/60 px-2.5 py-0.5 text-[10px] font-bold text-red-700 whitespace-nowrap">
                               <FiAlertCircle className="h-3 w-3" />
                               Cancelled
                             </span>
@@ -471,15 +482,15 @@ export default function AdminOrdersPage() {
                         </td>
 
                         {/* Actions */}
-                        <td className="px-5 py-3.5 text-right whitespace-nowrap">
-                          <div className="inline-flex items-center gap-1.5">
+                        <td className="px-4 py-3.5 text-right whitespace-nowrap align-middle">
+                          <div className="inline-flex items-center justify-end gap-1.5">
                             <button
                               type="button"
                               onClick={() => handleOpenFulfill(order)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-(--primary) hover:bg-(--primary-hover) text-[11px] font-bold text-white shadow-2xs transition-all cursor-pointer whitespace-nowrap"
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-(--primary) hover:bg-(--primary-hover) text-[11px] font-bold text-white shadow-2xs transition-all cursor-pointer whitespace-nowrap"
                               title="Manage & Deliver License"
                             >
-                              <FiKey className="h-3 w-3" />
+                              <FiKey className="h-3 w-3 shrink-0" />
                               <span>{isCompleted ? "Edit License" : "Deliver"}</span>
                             </button>
 
