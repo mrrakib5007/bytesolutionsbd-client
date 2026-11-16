@@ -7,67 +7,27 @@ import RoleGuard from "@/components/Auth/RoleGuard";
 import { useAuth } from "@/context/AuthContext";
 import EditProfileModal from "@/components/Dashboard/EditProfileModal";
 import {
-  FiKey,
+  FiUser,
   FiShoppingBag,
-  FiCheckCircle,
-  FiCopy,
-  FiCheck,
+  FiLogOut,
   FiMail,
   FiShield,
   FiPackage,
   FiClock,
   FiEdit2,
-  FiUser,
-  FiLogOut,
-  FiArrowRight,
+  FiCheckCircle,
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa6";
-import toast from "react-hot-toast";
-
-// Demo user order history & license keys
-const userOrders = [
-  {
-    orderId: "SLH-8941",
-    productTitle: "Canva Pro Subscription",
-    slug: "canva-pro-subscription",
-    image:
-      "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=950&h=700&auto=format&fit=crop&q=80",
-    variant: "1 Year",
-    price: 99,
-    licenseKey: "CANVA-PRO-9982-K7X1-AUTH",
-    purchaseDate: "16 Nov 2026",
-    status: "Active",
-    downloadUrl: "https://canva.com",
-  },
-  {
-    orderId: "SLH-8940",
-    productTitle: "WA Sender Marketing Suite",
-    slug: "wa-sender-marketing-suite",
-    image:
-      "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=950&h=700&auto=format&fit=crop&q=80",
-    variant: "1 Year",
-    price: 349,
-    licenseKey: "WAS-2026-B819-PLT0-8911",
-    purchaseDate: "10 Nov 2026",
-    status: "Active",
-    downloadUrl: "#",
-  },
-];
 
 export default function UserDashboardPage() {
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState("licenses"); // "licenses" | "orders" | "profile"
-  const [copiedKey, setCopiedKey] = useState(null);
+  const [activeTab, setActiveTab] = useState("profile"); // "profile" | "orders"
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  const DEFAULT_IMAGE = "https://i.ibb.co.com/ycfgs7BG/profile.jpg";
+  // Orders list (demo data removed)
+  const orders = [];
 
-  const handleCopy = (key) => {
-    navigator.clipboard.writeText(key);
-    setCopiedKey(key);
-    toast.success("License key copied to clipboard!");
-    setTimeout(() => setCopiedKey(null), 2500);
-  };
+  const DEFAULT_IMAGE = "https://i.ibb.co.com/ycfgs7BG/profile.jpg";
 
   // Format full WhatsApp with country code
   const fullWhatsapp = user?.whatsapp
@@ -96,15 +56,6 @@ export default function UserDashboardPage() {
             </div>
 
             <div className="flex items-center gap-2.5">
-              {isAdmin && (
-                <Link
-                  href="/paramount"
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2 text-xs font-bold text-emerald-400 shadow-xs hover:bg-slate-800 transition-colors"
-                >
-                  <FiShield className="h-3.5 w-3.5" />
-                  Paramount Console
-                </Link>
-              )}
               <Link
                 href="/products"
                 className="inline-flex items-center gap-1.5 rounded-xl bg-(--primary) px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-(--primary-hover) transition-colors"
@@ -117,7 +68,7 @@ export default function UserDashboardPage() {
 
           {/* Main Layout: Slim Left Sidebar + Right Content */}
           <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-8">
-            {/* Left Sidebar (Reduced Width: w-full lg:w-64 xl:w-72) */}
+            {/* Left Sidebar */}
             <aside className="w-full lg:w-64 xl:w-72 shrink-0 space-y-4">
               <div className="rounded-3xl border border-gray-200/80 bg-white p-5 shadow-xs">
                 {/* Profile Avatar & Details */}
@@ -155,30 +106,19 @@ export default function UserDashboardPage() {
                   </div>
                 </div>
 
-                {/* Navigation Buttons */}
+                {/* Left Navigation: My Profile, My Orders, Sign Out */}
                 <nav className="mt-6 border-t border-gray-100 pt-4 space-y-1">
                   <button
                     type="button"
-                    onClick={() => setActiveTab("licenses")}
-                    className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                      activeTab === "licenses"
+                    onClick={() => setActiveTab("profile")}
+                    className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                      activeTab === "profile"
                         ? "bg-(--primary) text-white shadow-xs"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >
-                    <span className="flex items-center gap-2.5">
-                      <FiKey className="h-4 w-4" />
-                      <span>My Licenses</span>
-                    </span>
-                    <span
-                      className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md ${
-                        activeTab === "licenses"
-                          ? "bg-white/20 text-white"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {userOrders.length}
-                    </span>
+                    <FiUser className="h-4 w-4" />
+                    <span>My Profile</span>
                   </button>
 
                   <button
@@ -194,42 +134,18 @@ export default function UserDashboardPage() {
                       <FiShoppingBag className="h-4 w-4" />
                       <span>My Orders</span>
                     </span>
-                    <span
-                      className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md ${
-                        activeTab === "orders"
-                          ? "bg-white/20 text-white"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {userOrders.length}
-                    </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveTab("profile")}
-                    className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                      activeTab === "profile"
-                        ? "bg-(--primary) text-white shadow-xs"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                  >
-                    <FiUser className="h-4 w-4" />
-                    <span>Profile Details</span>
-                  </button>
-
-                  {isAdmin && (
-                    <Link
-                      href="/paramount"
-                      className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-emerald-800 bg-emerald-50/70 hover:bg-emerald-100/90 transition-colors"
-                    >
-                      <span className="flex items-center gap-2.5">
-                        <FiShield className="h-4 w-4 text-emerald-600" />
-                        <span>Paramount Console</span>
+                    {orders.length > 0 && (
+                      <span
+                        className={`text-[11px] font-bold px-1.5 py-0.5 rounded-md ${
+                          activeTab === "orders"
+                            ? "bg-white/20 text-white"
+                            : "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {orders.length}
                       </span>
-                      <FiArrowRight className="h-3 w-3 text-emerald-600" />
-                    </Link>
-                  )}
+                    )}
+                  </button>
 
                   <div className="pt-2 border-t border-gray-100">
                     <button
@@ -247,210 +163,13 @@ export default function UserDashboardPage() {
 
             {/* Right Column: Dynamic Content Area */}
             <main className="flex-1 min-w-0 w-full space-y-6">
-              {/* Quick Summary Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="rounded-2xl border border-gray-200/80 bg-white p-4.5 shadow-xs">
-                  <div className="flex items-center justify-between text-gray-500">
-                    <span className="text-xs font-semibold">Active Licenses</span>
-                    <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
-                      <FiKey className="h-4 w-4" />
-                    </div>
-                  </div>
-                  <div className="mt-2 text-2xl font-black text-gray-900">
-                    {userOrders.length}
-                  </div>
-                  <span className="text-[11px] text-emerald-600 font-medium">
-                    100% Guaranteed Active
-                  </span>
-                </div>
-
-                <div className="rounded-2xl border border-gray-200/80 bg-white p-4.5 shadow-xs">
-                  <div className="flex items-center justify-between text-gray-500">
-                    <span className="text-xs font-semibold">Total Orders</span>
-                    <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
-                      <FiShoppingBag className="h-4 w-4" />
-                    </div>
-                  </div>
-                  <div className="mt-2 text-2xl font-black text-gray-900">
-                    {userOrders.length}
-                  </div>
-                  <span className="text-[11px] text-blue-600 font-medium">
-                    Instant Digital Delivery
-                  </span>
-                </div>
-
-                <div className="rounded-2xl border border-gray-200/80 bg-white p-4.5 shadow-xs">
-                  <div className="flex items-center justify-between text-gray-500">
-                    <span className="text-xs font-semibold">Total Spent</span>
-                    <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
-                      <FiCheckCircle className="h-4 w-4" />
-                    </div>
-                  </div>
-                  <div className="mt-2 text-2xl font-black text-gray-900">
-                    ৳ 448
-                  </div>
-                  <span className="text-[11px] text-purple-600 font-medium">
-                    Saved ~৳ 10,000+
-                  </span>
-                </div>
-              </div>
-
-              {/* Tab 1: Licenses Vault */}
-              {activeTab === "licenses" && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-base font-bold text-gray-900">
-                        My License Vault ({userOrders.length})
-                      </h2>
-                      <p className="text-xs text-gray-500">
-                        Manage your active software activation keys and access credentials
-                      </p>
-                    </div>
-                  </div>
-
-                  {userOrders.map((order) => {
-                    const isCopied = copiedKey === order.licenseKey;
-                    return (
-                      <div
-                        key={order.orderId}
-                        className="rounded-2xl border border-gray-200/80 bg-white p-5 shadow-xs transition-all hover:border-(--primary)/30"
-                      >
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                          <div className="flex items-start gap-3.5">
-                            <div className="relative h-14 w-14 rounded-xl overflow-hidden bg-slate-100 shrink-0 border border-gray-200">
-                              <Image
-                                src={order.image}
-                                alt={order.productTitle}
-                                fill
-                                sizes="56px"
-                                className="object-cover"
-                              />
-                            </div>
-                            <div>
-                              <Link
-                                href={`/products/${order.slug}`}
-                                className="text-sm font-bold text-gray-900 hover:text-(--primary) transition-colors"
-                              >
-                                {order.productTitle}
-                              </Link>
-                              <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
-                                <span className="rounded bg-gray-100 px-2 py-0.5 font-semibold text-gray-700">
-                                  {order.variant}
-                                </span>
-                                <span>•</span>
-                                <span>Purchased: {order.purchaseDate}</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
-                              <FiCheckCircle className="h-3 w-3" />
-                              {order.status}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* License Key Box */}
-                        <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
-                          <div className="flex items-center gap-2">
-                            <FiKey className="h-4 w-4 text-(--primary) shrink-0" />
-                            <span className="text-xs font-semibold text-gray-600">
-                              Activation Key:
-                            </span>
-                            <code className="rounded bg-white px-2 py-0.5 font-mono text-xs font-bold text-gray-900 border border-gray-200">
-                              {order.licenseKey}
-                            </code>
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => handleCopy(order.licenseKey)}
-                            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-(--primary) px-3 py-1.5 text-xs font-semibold text-white shadow-xs hover:bg-(--primary-hover) transition-colors cursor-pointer"
-                          >
-                            {isCopied ? (
-                              <>
-                                <FiCheck className="h-3.5 w-3.5" />
-                                <span>Copied!</span>
-                              </>
-                            ) : (
-                              <>
-                                <FiCopy className="h-3.5 w-3.5" />
-                                <span>Copy Key</span>
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* Tab 2: Orders History */}
-              {activeTab === "orders" && (
-                <div className="space-y-4">
-                  <div>
-                    <h2 className="text-base font-bold text-gray-900">
-                      Order History ({userOrders.length})
-                    </h2>
-                    <p className="text-xs text-gray-500">
-                      Overview of all completed purchases and invoice details
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs text-gray-600">
-                        <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
-                          <tr>
-                            <th className="px-5 py-3">Order ID</th>
-                            <th className="px-5 py-3">Product</th>
-                            <th className="px-5 py-3">Duration</th>
-                            <th className="px-5 py-3">Price</th>
-                            <th className="px-5 py-3">Status</th>
-                            <th className="px-5 py-3">Date</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                          {userOrders.map((order) => (
-                            <tr key={order.orderId} className="hover:bg-gray-50/50">
-                              <td className="px-5 py-3.5 font-mono font-bold text-gray-900">
-                                {order.orderId}
-                              </td>
-                              <td className="px-5 py-3.5 font-semibold text-gray-900">
-                                {order.productTitle}
-                              </td>
-                              <td className="px-5 py-3.5">{order.variant}</td>
-                              <td className="px-5 py-3.5 font-bold text-gray-900">
-                                ৳ {order.price}
-                              </td>
-                              <td className="px-5 py-3.5">
-                                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
-                                  <FiCheckCircle className="h-3 w-3" />
-                                  {order.status}
-                                </span>
-                              </td>
-                              <td className="px-5 py-3.5 text-gray-500">
-                                {order.purchaseDate}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Tab 3: Profile Details */}
+              {/* Tab 1: My Profile */}
               {activeTab === "profile" && (
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                       <h2 className="text-base font-bold text-gray-900">
-                        Account & Profile Details
+                        Profile Details
                       </h2>
                       <p className="text-xs text-gray-500">
                         Personal identity, registered WhatsApp contact and security
@@ -483,7 +202,7 @@ export default function UserDashboardPage() {
                           <FiMail className="h-3.5 w-3.5 text-gray-400" />
                           Email Address
                         </span>
-                        <span className="text-sm font-bold text-gray-900">
+                        <span className="text-sm font-bold text-gray-900 truncate block">
                           {user?.email || "Not provided"}
                         </span>
                       </div>
@@ -505,11 +224,88 @@ export default function UserDashboardPage() {
                         </span>
                         <span className="inline-flex items-center gap-1 text-sm font-bold text-emerald-600">
                           <FiCheckCircle className="h-4 w-4" />
-                          Active Customer
+                          Active
                         </span>
                       </div>
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* Tab 2: My Orders */}
+              {activeTab === "orders" && (
+                <div className="space-y-4">
+                  <div>
+                    <h2 className="text-base font-bold text-gray-900">
+                      My Orders
+                    </h2>
+                    <p className="text-xs text-gray-500">
+                      Overview of all completed purchases and digital license keys
+                    </p>
+                  </div>
+
+                  {orders.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-gray-300 bg-white p-12 text-center space-y-3 shadow-xs">
+                      <div className="inline-flex p-3 rounded-2xl bg-gray-50 border border-gray-200 text-gray-400">
+                        <FiShoppingBag className="h-8 w-8" />
+                      </div>
+                      <h3 className="text-sm font-bold text-gray-900">
+                        No Orders Placed Yet
+                      </h3>
+                      <p className="text-xs text-gray-500 max-w-sm mx-auto">
+                        You have not purchased any licenses or software subscriptions yet. Explore our genuine tools and creative assets at the best price.
+                      </p>
+                      <Link
+                        href="/products"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-(--primary) hover:bg-(--primary-hover) text-xs font-bold text-white transition-all cursor-pointer"
+                      >
+                        <FiPackage className="h-4 w-4" />
+                        <span>Browse Products</span>
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs text-gray-600">
+                          <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
+                            <tr>
+                              <th className="px-5 py-3">Order ID</th>
+                              <th className="px-5 py-3">Product</th>
+                              <th className="px-5 py-3">Duration</th>
+                              <th className="px-5 py-3">Price</th>
+                              <th className="px-5 py-3">Status</th>
+                              <th className="px-5 py-3">Date</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100">
+                            {orders.map((order) => (
+                              <tr key={order.orderId} className="hover:bg-gray-50/50">
+                                <td className="px-5 py-3.5 font-mono font-bold text-gray-900">
+                                  {order.orderId}
+                                </td>
+                                <td className="px-5 py-3.5 font-semibold text-gray-900">
+                                  {order.productTitle}
+                                </td>
+                                <td className="px-5 py-3.5">{order.variant}</td>
+                                <td className="px-5 py-3.5 font-bold text-gray-900">
+                                  ৳ {order.price}
+                                </td>
+                                <td className="px-5 py-3.5">
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                                    <FiCheckCircle className="h-3 w-3" />
+                                    {order.status}
+                                  </span>
+                                </td>
+                                <td className="px-5 py-3.5 text-gray-500">
+                                  {order.purchaseDate}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </main>
