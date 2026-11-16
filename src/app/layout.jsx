@@ -1,9 +1,8 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Shared/Navbar";
 import { Toaster } from "react-hot-toast";
-import Footer from "@/components/Shared/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+import LayoutShell from "@/components/Shared/LayoutShell";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -102,10 +101,8 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
       >
         <AuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
+          <LayoutShell>{children}</LayoutShell>
           <Toaster />
-          <Footer />
         </AuthProvider>
       </body>
     </html>

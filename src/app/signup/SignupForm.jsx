@@ -14,6 +14,7 @@ import {
   FiAlertCircle,
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
+import { LuLoader } from "react-icons/lu";
 
 const COUNTRY_CONFIGS = {
   "+880": {
@@ -483,7 +484,7 @@ export default function SignupForm() {
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <LuLoader className="h-4 w-4 animate-spin" />
                     <span>Creating Account...</span>
                   </div>
                 ) : (

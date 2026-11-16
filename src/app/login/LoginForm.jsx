@@ -12,6 +12,7 @@ import {
   FiEyeOff,
   FiAlertCircle,
 } from "react-icons/fi";
+import { LuLoader } from "react-icons/lu";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -257,7 +258,7 @@ export default function LoginForm() {
                 >
                   {isSubmitting ? (
                     <div className="flex items-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      <LuLoader className="h-4 w-4 animate-spin" />
                       <span>Signing In...</span>
                     </div>
                   ) : (

@@ -11,14 +11,14 @@ const sliderImages = [
     title: "WA Sender Marketing Tool Offer",
     imageUrl:
       "https://i.ibb.co.com/Gv1GBtWZ/WA-Sender-Marketing-Tool-Offer.png",
-    productUrl: "/products/wa-sender",
+    productUrl: "/products/wa-sender-marketing-suite",
   },
   {
     id: 2,
     title: "Canva Pro 1 Year Subscription Offer",
     imageUrl:
       "https://i.ibb.co.com/dznrYkj/Canva-Pro-1-Year-Subscription-Deal.png",
-    productUrl: "/products/canva-pro",
+    productUrl: "/products/canva-pro-subscription",
   },
 ];
 
@@ -67,19 +67,19 @@ export default function BannerSection() {
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
             <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-1 text-xs font-semibold text-(--primary) shadow-xs sm:text-sm">
               <FiCheckCircle className="h-4 w-4 shrink-0 text-(--primary)" />
-              <span>Smart Digital Solutions. Trusted Software.</span>
+              <span>100% Genuine & Instant Delivery</span>
             </div>
 
-            <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl lg:text-5xl xl:text-6xl">
-              <span>Everything Digital.</span>
-              <br />
-              <span className="gradient-text">One Trusted Hub.</span>
+            <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-neutral-900 sm:text-4xl lg:text-[44px] xl:text-[52px] leading-[1.18]">
+              <span className="block">Trusted Marketplace</span>
+              <span className="block mt-1 sm:mt-1.5">
+                for <span className="gradient-text">Digital Products</span>
+              </span>
             </h1>
 
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-neutral-600 sm:text-base lg:text-lg">
-              Discover genuine software licenses, premium digital tools,
-              creative assets, and productivity solutions - all in one convenient
-              marketplace.
+              WhatsApp marketing tools, AI subscriptions, VPNs, design tools and
+              more, all digital products in one place at the best price.
             </p>
 
             <div className="mt-6 flex w-full flex-col items-center gap-3.5 sm:w-auto sm:flex-row sm:mt-8 sm:gap-4">

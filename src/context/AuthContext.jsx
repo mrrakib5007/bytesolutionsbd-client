@@ -156,11 +156,16 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const isAdmin = user?.role === "admin";
+  const hasRole = (role) => (user?.role || "user").toLowerCase() === role?.toLowerCase();
+
   return (
     <AuthContext.Provider
       value={{
         user,
         loading,
+        isAdmin,
+        hasRole,
         login,
         signup,
         logout,

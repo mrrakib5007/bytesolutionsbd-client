@@ -3,27 +3,29 @@ import CategorySection from "@/components/Home/CategorySection";
 import FeaturedProductsSection from "@/components/Home/FeaturedProductsSection";
 
 export const metadata = {
-  title: "Soft License Hub | Genuine Software Licenses, Keys & Subscriptions",
+  title: "Soft License Hub | Trusted Marketplace for Digital Products",
   description:
-    "Buy 100% genuine software licenses, productivity tools, marketing suites, and cloud subscriptions at the best prices with instant delivery and dedicated support in Bangladesh.",
+    "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price with instant delivery and warranty.",
   keywords: [
     "SoftLicenseHub",
-    "software licenses",
-    "buy software licenses bd",
-    "genuine activation keys",
-    "digital subscriptions",
-    "marketing software",
+    "Trusted Marketplace for Digital Products",
+    "WhatsApp marketing tools",
+    "AI subscriptions",
+    "VPNs",
     "design tools",
-    "canva pro",
-    "wa sender",
+    "digital products at best price",
+    "software licenses bd",
+    "canva pro subscription",
+    "wa sender marketing suite",
+    "genuine license keys",
   ],
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "Soft License Hub | Genuine Software Licenses & Digital Tools",
+    title: "Soft License Hub | Trusted Marketplace for Digital Products",
     description:
-      "Explore verified software licenses, productivity suites, marketing tools, and subscriptions with instant digital delivery and 100% guarantee.",
+      "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price.",
     url: "https://softlicensehub.com",
     siteName: "Soft License Hub",
     type: "website",
@@ -32,15 +34,15 @@ export const metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Soft License Hub",
+        alt: "Soft License Hub - Trusted Marketplace for Digital Products",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Soft License Hub | Genuine Software Licenses & Digital Tools",
+    title: "Soft License Hub | Trusted Marketplace for Digital Products",
     description:
-      "Explore verified software licenses, productivity suites, and subscriptions with instant digital delivery.",
+      "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price.",
     images: ["/og-image.png"],
   },
 };
