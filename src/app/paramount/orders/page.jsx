@@ -200,8 +200,8 @@ export default function AdminOrdersPage() {
         </div>
       ) : (
         <>
-          {/* Mobile Card View (Zero horizontal scrolling on mobile) */}
-          <div className="block md:hidden space-y-3.5">
+          {/* Card View (< xl: mobile, tablet, and compact laptop screens - ZERO horizontal scroll & ZERO broken text) */}
+          <div className="block xl:hidden space-y-4">
             {orders.map((order) => {
               const isCompleted = order.orderStatus === "completed";
               const isPending = order.orderStatus === "pending";
@@ -220,132 +220,148 @@ export default function AdminOrdersPage() {
               return (
                 <div
                   key={order._id}
-                  className="rounded-2xl border border-gray-200/90 bg-white p-4 shadow-xs space-y-3"
+                  className="rounded-2xl border border-gray-200/90 bg-white p-4 sm:p-5 shadow-xs space-y-4 hover:border-gray-300 transition-all"
                 >
-                  {/* Card Header: Order ID + Status */}
-                  <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
-                    <div>
-                      <div className="font-mono font-bold text-xs text-gray-900">
+                  {/* Top Bar: Order ID, Date, Status, Total, Actions */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3.5">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="font-mono font-bold text-xs bg-gray-50 border border-gray-200 px-2.5 py-1 rounded-lg text-gray-900 whitespace-nowrap">
                         {order.orderId}
-                      </div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">
+                      </span>
+                      <span className="text-[11px] text-gray-400 whitespace-nowrap">
                         {formattedDate}
-                      </div>
-                    </div>
+                      </span>
 
-                    <div>
                       {isCompleted && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 whitespace-nowrap">
                           <FiCheckCircle className="h-3 w-3" />
                           Completed
                         </span>
                       )}
                       {isPending && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold text-amber-700 whitespace-nowrap">
                           <FiClock className="h-3 w-3" />
                           Pending
                         </span>
                       )}
                       {isCancelled && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold text-red-700">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[10px] font-bold text-red-700 whitespace-nowrap">
                           <FiAlertCircle className="h-3 w-3" />
                           Cancelled
                         </span>
                       )}
                     </div>
+
+                    <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-50">
+                      <div className="text-left sm:text-right">
+                        <span className="text-[10px] text-gray-400 block uppercase font-bold">
+                          Total Paid
+                        </span>
+                        <span className="font-mono font-extrabold text-sm text-gray-950 whitespace-nowrap">
+                          ৳ {order.totalAmount?.toFixed(2)}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => handleOpenFulfill(order)}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-(--primary) hover:bg-(--primary-hover) text-xs font-bold text-white shadow-2xs transition-all cursor-pointer whitespace-nowrap"
+                        >
+                          <FiKey className="h-3.5 w-3.5" />
+                          <span>{isCompleted ? "Edit License" : "Deliver"}</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteOrder(order._id)}
+                          className="p-2 rounded-xl border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer shrink-0"
+                          title="Delete Order"
+                        >
+                          <FiTrash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Customer Info */}
-                  <div className="text-xs space-y-0.5">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
-                      Customer
-                    </span>
-                    <p className="font-bold text-gray-900">{order.customer?.name}</p>
-                    <p className="text-[11px] text-gray-500 truncate">{order.customer?.email}</p>
-                    {order.customer?.whatsapp && (
-                      <p className="text-[11px] font-mono text-emerald-700">
-                        {order.customer.whatsapp}
-                      </p>
-                    )}
-                  </div>
+                  {/* Info Grid: 3 Clean Columns on sm+, 1 on mobile */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                    {/* Col 1: Customer */}
+                    <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-0.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
+                        Customer
+                      </span>
+                      <p className="font-bold text-gray-900 truncate">{order.customer?.name}</p>
+                      <p className="text-[11px] text-gray-500 truncate">{order.customer?.email}</p>
+                      {order.customer?.whatsapp && (
+                        <p className="text-[11px] font-mono text-emerald-700 truncate">
+                          {order.customer.whatsapp}
+                        </p>
+                      )}
+                    </div>
 
-                  {/* Ordered Items */}
-                  <div className="text-xs space-y-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
-                      Products
-                    </span>
-                    <div className="space-y-1">
+                    {/* Col 2: Products */}
+                    <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
+                        Ordered Products
+                      </span>
                       {order.items?.map((it, idx) => (
-                        <div key={idx} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg text-xs">
-                          <span className="font-medium text-gray-900 truncate max-w-[200px]">
-                            {it.title}
-                          </span>
-                          <span className="font-mono text-[10px] bg-white border border-gray-200 px-1.5 py-0.5 rounded text-gray-700 shrink-0">
+                        <div key={idx} className="flex items-center justify-between gap-1.5 bg-white border border-gray-200/80 p-2 rounded-lg text-xs">
+                          <span className="font-semibold text-gray-900 truncate">{it.title}</span>
+                          <span className="font-mono text-[10px] bg-gray-50 border border-gray-200 px-1.5 py-0.5 rounded text-gray-700 shrink-0 whitespace-nowrap">
                             {it.duration} × {it.quantity}
                           </span>
                         </div>
                       ))}
                     </div>
-                  </div>
 
-                  {/* Payment Verification Box */}
-                  <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-500">Method:</span>
-                      <span className="font-bold uppercase text-gray-900">{order.payment?.method}</span>
+                    {/* Col 3: Payment Verification */}
+                    <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-1 text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                          Payment
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <span className="font-bold uppercase text-gray-800 text-[10px]">
+                            {order.payment?.method}
+                          </span>
+                          <span
+                            className={`text-[9px] font-bold px-1.5 py-0.2 rounded whitespace-nowrap ${
+                              order.payment?.status === "verified"
+                                ? "bg-emerald-50 text-emerald-700"
+                                : "bg-amber-50 text-amber-700"
+                            }`}
+                          >
+                            {order.payment?.status === "verified" ? "Verified" : "Unverified"}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="font-mono font-bold text-emerald-700 text-[11px] truncate">
+                        TrxID: {order.payment?.trxId}
+                      </div>
+                      <div className="font-mono text-gray-500 text-[11px] truncate">
+                        From: {order.payment?.senderNumber}
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-500">TrxID:</span>
-                      <span className="font-mono font-bold text-emerald-700">{order.payment?.trxId}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-500">Sender:</span>
-                      <span className="font-mono text-gray-800">{order.payment?.senderNumber}</span>
-                    </div>
-                    <div className="flex items-center justify-between border-t border-gray-200 pt-1.5 font-bold">
-                      <span className="text-gray-700">Total:</span>
-                      <span className="font-mono text-sm text-gray-950">৳ {order.totalAmount?.toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center justify-end gap-2 pt-1 border-t border-gray-100">
-                    <button
-                      type="button"
-                      onClick={() => handleOpenFulfill(order)}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-(--primary) hover:bg-(--primary-hover) text-xs font-bold text-white shadow-2xs transition-all cursor-pointer"
-                    >
-                      <FiKey className="h-3.5 w-3.5" />
-                      <span>{isCompleted ? "Edit License" : "Deliver / Approve"}</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteOrder(order._id)}
-                      className="p-2 rounded-xl border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer"
-                      title="Delete Order"
-                    >
-                      <FiTrash2 className="h-3.5 w-3.5" />
-                    </button>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Desktop Table View */}
-          <div className="hidden md:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
+          {/* Desktop Table View (>= xl: Large wide desktop screens only) */}
+          <div className="hidden xl:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-gray-600">
+              <table className="w-full text-left text-xs text-gray-600 border-collapse">
                 <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                   <tr>
-                    <th className="px-5 py-3.5">Order ID & Date</th>
-                    <th className="px-5 py-3.5">Customer</th>
-                    <th className="px-5 py-3.5">Items</th>
-                    <th className="px-5 py-3.5">Payment Verification</th>
-                    <th className="px-5 py-3.5">Amount</th>
-                    <th className="px-5 py-3.5">Status</th>
-                    <th className="px-5 py-3.5 text-right">Actions</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Order ID & Date</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Customer</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Items</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Payment Verification</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Amount</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Status</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -365,21 +381,21 @@ export default function AdminOrdersPage() {
                     return (
                       <tr key={order._id} className="hover:bg-gray-50/60 transition-colors">
                         {/* Order ID & Date */}
-                        <td className="px-5 py-3.5">
-                          <div className="font-mono font-bold text-gray-900">
+                        <td className="px-5 py-3.5 whitespace-nowrap">
+                          <div className="font-mono font-bold text-gray-900 whitespace-nowrap">
                             {order.orderId}
                           </div>
-                          <div className="text-[11px] text-gray-400">
+                          <div className="text-[11px] text-gray-400 whitespace-nowrap">
                             {formattedDate}
                           </div>
                         </td>
 
                         {/* Customer */}
-                        <td className="px-5 py-3.5">
-                          <div className="font-bold text-gray-900 truncate max-w-[150px]">
+                        <td className="px-5 py-3.5 whitespace-nowrap">
+                          <div className="font-bold text-gray-900">
                             {order.customer?.name}
                           </div>
-                          <div className="text-[11px] text-gray-500 truncate max-w-[150px]">
+                          <div className="text-[11px] text-gray-500">
                             {order.customer?.email}
                           </div>
                           <div className="font-mono text-[10px] text-gray-400">
@@ -388,15 +404,15 @@ export default function AdminOrdersPage() {
                         </td>
 
                         {/* Items */}
-                        <td className="px-5 py-3.5">
+                        <td className="px-5 py-3.5 whitespace-nowrap">
                           <div className="space-y-1">
                             {order.items?.map((it, idx) => (
                               <div key={idx} className="flex items-center gap-1.5 text-xs text-gray-800">
-                                <span className="font-medium truncate max-w-[160px]">
+                                <span className="font-medium">
                                   {it.title}
                                 </span>
-                                <span className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-mono">
-                                  {it.duration}
+                                <span className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 font-mono whitespace-nowrap">
+                                  {it.duration} × {it.quantity}
                                 </span>
                               </div>
                             ))}
@@ -404,13 +420,13 @@ export default function AdminOrdersPage() {
                         </td>
 
                         {/* Payment Verification */}
-                        <td className="px-5 py-3.5">
+                        <td className="px-5 py-3.5 whitespace-nowrap">
                           <div className="flex items-center gap-1.5">
                             <span className="font-bold uppercase text-gray-900">
                               {order.payment?.method}
                             </span>
                             <span
-                              className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
+                              className={`text-[9px] font-bold px-1.5 py-0.2 rounded whitespace-nowrap ${
                                 order.payment?.status === "verified"
                                   ? "bg-emerald-50 text-emerald-700"
                                   : "bg-amber-50 text-amber-700"
@@ -419,35 +435,35 @@ export default function AdminOrdersPage() {
                               {order.payment?.status === "verified" ? "Verified" : "Unverified"}
                             </span>
                           </div>
-                          <div className="font-mono text-[11px] font-bold text-emerald-700 mt-0.5">
+                          <div className="font-mono text-[11px] font-bold text-emerald-700 mt-0.5 whitespace-nowrap">
                             TrxID: {order.payment?.trxId}
                           </div>
-                          <div className="font-mono text-[10px] text-gray-400">
+                          <div className="font-mono text-[10px] text-gray-400 whitespace-nowrap">
                             From: {order.payment?.senderNumber}
                           </div>
                         </td>
 
                         {/* Total Amount */}
-                        <td className="px-5 py-3.5 font-bold font-mono text-gray-950">
+                        <td className="px-5 py-3.5 font-bold font-mono text-gray-950 whitespace-nowrap">
                           ৳ {order.totalAmount?.toFixed(2)}
                         </td>
 
                         {/* Status */}
-                        <td className="px-5 py-3.5">
+                        <td className="px-5 py-3.5 whitespace-nowrap">
                           {isCompleted && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 whitespace-nowrap">
                               <FiCheckCircle className="h-3 w-3" />
                               Completed
                             </span>
                           )}
                           {isPending && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-700">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-700 whitespace-nowrap">
                               <FiClock className="h-3 w-3" />
                               Pending
                             </span>
                           )}
                           {isCancelled && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-bold text-red-700">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-bold text-red-700 whitespace-nowrap">
                               <FiAlertCircle className="h-3 w-3" />
                               Cancelled
                             </span>
@@ -455,12 +471,12 @@ export default function AdminOrdersPage() {
                         </td>
 
                         {/* Actions */}
-                        <td className="px-5 py-3.5 text-right">
+                        <td className="px-5 py-3.5 text-right whitespace-nowrap">
                           <div className="inline-flex items-center gap-1.5">
                             <button
                               type="button"
                               onClick={() => handleOpenFulfill(order)}
-                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-(--primary) hover:bg-(--primary-hover) text-[11px] font-bold text-white shadow-2xs transition-all cursor-pointer"
+                              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-(--primary) hover:bg-(--primary-hover) text-[11px] font-bold text-white shadow-2xs transition-all cursor-pointer whitespace-nowrap"
                               title="Manage & Deliver License"
                             >
                               <FiKey className="h-3 w-3" />
@@ -470,7 +486,7 @@ export default function AdminOrdersPage() {
                             <button
                               type="button"
                               onClick={() => handleDeleteOrder(order._id)}
-                              className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer"
+                              className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer shrink-0"
                               title="Delete Order"
                             >
                               <FiTrash2 className="h-3.5 w-3.5" />

@@ -317,8 +317,8 @@ export default function AdminProductsPage() {
         </div>
       ) : (
         <>
-          {/* Mobile Card View (No horizontal scrolling on small devices) */}
-          <div className="block md:hidden space-y-3">
+          {/* Mobile Card View (No horizontal scrolling on small/medium devices) */}
+          <div className="block xl:hidden space-y-3">
             {filteredProducts.map((product) => {
               const lowestPrice = product.variants?.[0]?.price;
               const highestPrice =
@@ -440,17 +440,17 @@ export default function AdminProductsPage() {
             })}
           </div>
 
-          {/* Desktop Table View */}
-          <div className="hidden md:block rounded-2xl border border-gray-200/80 bg-white shadow-xs overflow-hidden">
+          {/* Desktop Table View (>= xl screens only) */}
+          <div className="hidden xl:block rounded-2xl border border-gray-200/80 bg-white shadow-xs overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50/70 text-[11px] font-bold text-gray-600 uppercase tracking-wider">
-                    <th className="py-3.5 px-4 sm:px-6">Product</th>
-                    <th className="py-3.5 px-4">Category & Badge</th>
-                    <th className="py-3.5 px-4">Pricing Plans</th>
-                    <th className="py-3.5 px-4">Rating</th>
-                    <th className="py-3.5 px-4 sm:px-6 text-right">Actions</th>
+                    <th className="py-3.5 px-4 sm:px-6 whitespace-nowrap">Product</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">Category & Badge</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">Pricing Plans</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">Rating</th>
+                    <th className="py-3.5 px-4 sm:px-6 text-right whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-xs">
@@ -466,7 +466,7 @@ export default function AdminProductsPage() {
                         className="hover:bg-slate-50/60 transition-colors"
                       >
                         {/* Product Thumbnail & Details */}
-                        <td className="py-4 px-4 sm:px-6">
+                        <td className="py-4 px-4 sm:px-6 whitespace-nowrap">
                           <div className="flex items-center gap-3">
                             <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-xl border border-gray-200 overflow-hidden bg-gray-50 shrink-0">
                               {product.image ? (
@@ -506,7 +506,7 @@ export default function AdminProductsPage() {
                         </td>
 
                         {/* Category & Badge */}
-                        <td className="py-4 px-4">
+                        <td className="py-4 px-4 whitespace-nowrap">
                           <div className="flex flex-col gap-1 items-start">
                             <span className="inline-block px-2 py-0.5 rounded-md text-[11px] font-semibold bg-gray-100 text-gray-700">
                               {product.category || "General"}
@@ -520,9 +520,9 @@ export default function AdminProductsPage() {
                         </td>
 
                         {/* Pricing Plans */}
-                        <td className="py-4 px-4">
+                        <td className="py-4 px-4 whitespace-nowrap">
                           <div className="space-y-0.5">
-                            <p className="font-bold text-gray-900">
+                            <p className="font-bold font-mono text-gray-900">
                               ৳ {lowestPrice ?? 0}
                               {highestPrice && highestPrice !== lowestPrice && (
                                 <span className="font-normal text-gray-500">
@@ -538,7 +538,7 @@ export default function AdminProductsPage() {
                         </td>
 
                         {/* Rating */}
-                        <td className="py-4 px-4">
+                        <td className="py-4 px-4 whitespace-nowrap">
                           <div className="flex items-center gap-1">
                             <FiStar className="h-3.5 w-3.5 text-amber-500 fill-amber-400" />
                             <span className="font-bold text-gray-900">
@@ -551,7 +551,7 @@ export default function AdminProductsPage() {
                         </td>
 
                         {/* Actions */}
-                        <td className="py-4 px-4 sm:px-6 text-right">
+                        <td className="py-4 px-4 sm:px-6 text-right whitespace-nowrap">
                           <div className="inline-flex items-center gap-1.5">
                             <Link
                               href={`/products/${product.slug}`}
