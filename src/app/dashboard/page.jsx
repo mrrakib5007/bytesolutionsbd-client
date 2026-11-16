@@ -198,7 +198,7 @@ export default function UserDashboardPage() {
                       </div>
 
                       <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
-                        <span className="text-xs font-medium text-gray-500 block mb-1 flex items-center gap-1.5">
+                        <span className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1.5">
                           <FiMail className="h-3.5 w-3.5 text-gray-400" />
                           Email Address
                         </span>
@@ -208,7 +208,7 @@ export default function UserDashboardPage() {
                       </div>
 
                       <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
-                        <span className="text-xs font-medium text-gray-500 block mb-1 flex items-center gap-1.5">
+                        <span className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1.5">
                           <FaWhatsapp className="h-3.5 w-3.5 text-emerald-600" />
                           WhatsApp (Full Number)
                         </span>
@@ -218,7 +218,7 @@ export default function UserDashboardPage() {
                       </div>
 
                       <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
-                        <span className="text-xs font-medium text-gray-500 block mb-1 flex items-center gap-1.5">
+                        <span className="text-xs font-medium text-gray-500 mb-1 flex items-center gap-1.5">
                           <FiClock className="h-3.5 w-3.5 text-gray-400" />
                           Account Status
                         </span>
