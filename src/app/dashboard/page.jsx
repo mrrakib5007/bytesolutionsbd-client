@@ -40,32 +40,6 @@ export default function UserDashboardPage() {
     <RoleGuard allowedRoles={["user", "admin"]}>
       <div className="min-h-screen bg-slate-50/50 pb-20 pt-8 sm:pt-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          {/* Top Bar */}
-          <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <div>
-              <nav className="mb-1 flex items-center gap-1.5 text-xs font-medium text-gray-500">
-                <Link href="/" className="hover:text-(--primary) transition-colors">
-                  Home
-                </Link>
-                <span className="text-gray-300">»</span>
-                <span className="font-semibold text-(--primary)">My Account</span>
-              </nav>
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-gray-900">
-                User Dashboard
-              </h1>
-            </div>
-
-            <div className="flex items-center gap-2.5">
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-(--primary) px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-(--primary-hover) transition-colors"
-              >
-                <FiPackage className="h-3.5 w-3.5" />
-                Browse Store
-              </Link>
-            </div>
-          </div>
-
           {/* Main Layout: Slim Left Sidebar + Right Content */}
           <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-8">
             {/* Left Sidebar */}
