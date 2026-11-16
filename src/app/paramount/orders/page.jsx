@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
 import toast from "react-hot-toast";
 import OrderFulfillModal from "./OrderFulfillModal";
+import AdminOrderViewModal from "./AdminOrderViewModal";
 import {
   FiShoppingBag,
   FiSearch,
@@ -12,9 +12,7 @@ import {
   FiCheckCircle,
   FiAlertCircle,
   FiEdit3,
-  FiTrash2,
   FiEye,
-  FiKey,
 } from "react-icons/fi";
 import { LuLoader } from "react-icons/lu";
 
@@ -25,6 +23,21 @@ export default function AdminOrdersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+
+  // Format date and time in Bangladesh Dhaka Time (Asia/Dhaka)
+  const formatDhakaDateTime = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleString("en-GB", {
+      timeZone: "Asia/Dhaka",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
@@ -83,34 +96,15 @@ export default function AdminOrdersPage() {
     setIsModalOpen(true);
   };
 
+  const handleOpenView = (order) => {
+    setSelectedOrder(order);
+    setIsViewModalOpen(true);
+  };
+
   const handleOrderUpdated = (updatedOrder) => {
     setOrders((prev) =>
       prev.map((o) => (o._id === updatedOrder._id ? updatedOrder : o))
     );
-  };
-
-  const handleDeleteOrder = async (orderId) => {
-    if (!confirm("Are you sure you want to permanently delete this order?")) {
-      return;
-    }
-
-    try {
-      const res = await fetch(`http://localhost:5000/api/admin/orders/${orderId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        toast.success("Order deleted successfully");
-        setOrders((prev) => prev.filter((o) => o._id !== orderId));
-      } else {
-        toast.error(data.message || "Failed to delete order");
-      }
-    } catch (err) {
-      console.error("Delete order error:", err);
-      toast.error("Failed to delete order.");
-    }
   };
 
   // Counts for tabs
@@ -207,16 +201,6 @@ export default function AdminOrdersPage() {
               const isPending = order.orderStatus === "pending";
               const isCancelled = order.orderStatus === "cancelled";
 
-              const formattedDate = order.createdAt
-                ? new Date(order.createdAt).toLocaleDateString("en-GB", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : "N/A";
-
               return (
                 <div
                   key={order._id}
@@ -229,7 +213,7 @@ export default function AdminOrdersPage() {
                         {order.orderId}
                       </span>
                       <span className="text-[11px] text-gray-400 whitespace-nowrap">
-                        {formattedDate}
+                        {formatDhakaDateTime(order.createdAt)}
                       </span>
 
                       {isCompleted && (
@@ -262,23 +246,23 @@ export default function AdminOrdersPage() {
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-1.5 shrink-0">
                         <button
                           type="button"
-                          onClick={() => handleOpenFulfill(order)}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-(--primary) hover:bg-(--primary-hover) text-xs font-bold text-white shadow-2xs transition-all cursor-pointer whitespace-nowrap"
+                          onClick={() => handleOpenView(order)}
+                          className="p-2 rounded-xl border border-gray-200 text-gray-600 hover:text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50/70 transition-all cursor-pointer"
+                          title="View Order Details"
                         >
-                          <FiKey className="h-3.5 w-3.5" />
-                          <span>{isCompleted ? "Edit License" : "Deliver"}</span>
+                          <FiEye className="h-4 w-4" />
                         </button>
 
                         <button
                           type="button"
-                          onClick={() => handleDeleteOrder(order._id)}
-                          className="p-2 rounded-xl border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer shrink-0"
-                          title="Delete Order"
+                          onClick={() => handleOpenFulfill(order)}
+                          className="p-2 rounded-xl bg-(--primary) hover:bg-(--primary-hover) text-white shadow-2xs transition-all cursor-pointer"
+                          title={isCompleted ? "Edit License" : "Deliver License"}
                         >
-                          <FiTrash2 className="h-3.5 w-3.5" />
+                          <FiEdit3 className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
@@ -286,18 +270,17 @@ export default function AdminOrdersPage() {
 
                   {/* Info Grid: 3 Clean Columns on sm+, 1 on mobile */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                    {/* Col 1: Customer */}
+                    {/* Col 1: Customer (Name & Email only) */}
                     <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-0.5">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
                         Customer
                       </span>
-                      <p className="font-bold text-gray-900 truncate">{order.customer?.name}</p>
-                      <p className="text-[11px] text-gray-500 truncate">{order.customer?.email}</p>
-                      {order.customer?.whatsapp && (
-                        <p className="text-[11px] font-mono text-emerald-700 truncate">
-                          {order.customer.whatsapp}
-                        </p>
-                      )}
+                      <p className="font-bold text-gray-900 truncate" title={order.customer?.name}>
+                        {order.customer?.name}
+                      </p>
+                      <p className="text-[11px] text-gray-500 truncate" title={order.customer?.email}>
+                        {order.customer?.email}
+                      </p>
                     </div>
 
                     {/* Col 2: Products */}
@@ -315,32 +298,21 @@ export default function AdminOrdersPage() {
                       ))}
                     </div>
 
-                    {/* Col 3: Payment Verification */}
+                    {/* Col 3: Payment Verification (1 line: number(trxId)) */}
                     <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-1 text-xs">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                          Payment
-                        </span>
-                        <div className="flex items-center gap-1">
-                          <span className="font-bold uppercase text-gray-800 text-[10px]">
-                            {order.payment?.method}
-                          </span>
-                          <span
-                            className={`text-[9px] font-bold px-1.5 py-0.2 rounded whitespace-nowrap ${
-                              order.payment?.status === "verified"
-                                ? "bg-emerald-50 text-emerald-700"
-                                : "bg-amber-50 text-amber-700"
-                            }`}
-                          >
-                            {order.payment?.status === "verified" ? "Verified" : "Unverified"}
-                          </span>
-                        </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
+                        Payment
+                      </span>
+                      <div className="font-bold uppercase text-gray-900 text-xs">
+                        {order.payment?.method || "bKash"}
                       </div>
-                      <div className="font-mono font-bold text-emerald-700 text-[11px] truncate">
-                        TrxID: {order.payment?.trxId}
-                      </div>
-                      <div className="font-mono text-gray-500 text-[11px] truncate">
-                        From: {order.payment?.senderNumber}
+                      <div
+                        className="font-mono text-[11px] text-gray-600 truncate"
+                        title={order.payment?.senderNumber ? `${order.payment.senderNumber}(${order.payment.trxId || ""})` : order.payment?.trxId || "N/A"}
+                      >
+                        {order.payment?.senderNumber
+                          ? `${order.payment.senderNumber}(${order.payment?.trxId || ""})`
+                          : order.payment?.trxId || "N/A"}
                       </div>
                     </div>
                   </div>
@@ -354,13 +326,13 @@ export default function AdminOrdersPage() {
             <div className="w-full overflow-hidden">
               <table className="w-full text-left text-xs text-gray-600 border-collapse table-fixed">
                 <colgroup>
-                  <col className="w-[15%]" />
-                  <col className="w-[17%]" />
+                  <col className="w-[18%]" />
+                  <col className="w-[18%]" />
                   <col className="w-[24%]" />
-                  <col className="w-[17%]" />
-                  <col className="w-[8%]" />
-                  <col className="w-[8%]" />
-                  <col className="w-[11%]" />
+                  <col className="w-[19%]" />
+                  <col className="w-[7%]" />
+                  <col className="w-[7%]" />
+                  <col className="w-[7%]" />
                 </colgroup>
                 <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                   <tr>
@@ -379,27 +351,19 @@ export default function AdminOrdersPage() {
                     const isPending = order.orderStatus === "pending";
                     const isCancelled = order.orderStatus === "cancelled";
 
-                    const formattedDate = order.createdAt
-                      ? new Date(order.createdAt).toLocaleDateString("en-GB", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })
-                      : "N/A";
-
                     return (
                       <tr key={order._id} className="hover:bg-gray-50/60 transition-colors">
-                        {/* Order ID & Date */}
+                        {/* Order ID & Date (Dhaka Time) */}
                         <td className="px-4 py-3.5 whitespace-nowrap align-middle">
                           <div className="font-mono font-bold text-gray-900 tracking-tight whitespace-nowrap truncate" title={order.orderId}>
                             {order.orderId}
                           </div>
                           <div className="text-[11px] text-gray-400 whitespace-nowrap mt-0.5">
-                            {formattedDate}
+                            {formatDhakaDateTime(order.createdAt)}
                           </div>
                         </td>
 
-                        {/* Customer */}
+                        {/* Customer (Name & Email only) */}
                         <td className="px-4 py-3.5 align-middle">
                           <div className="font-bold text-gray-900 truncate" title={order.customer?.name}>
                             {order.customer?.name}
@@ -407,11 +371,6 @@ export default function AdminOrdersPage() {
                           <div className="text-[11px] text-gray-500 truncate" title={order.customer?.email}>
                             {order.customer?.email}
                           </div>
-                          {order.customer?.whatsapp && (
-                            <div className="font-mono text-[10px] text-gray-400 truncate">
-                              {order.customer.whatsapp}
-                            </div>
-                          )}
                         </td>
 
                         {/* Items - 2 Lines: Product Name on Top, Duration × Qty Badge Underneath */}
@@ -430,27 +389,18 @@ export default function AdminOrdersPage() {
                           </div>
                         </td>
 
-                        {/* Payment Verification */}
-                        <td className="px-4 py-3.5 whitespace-nowrap align-middle">
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-bold uppercase text-gray-900 text-[11px]">
-                              {order.payment?.method}
-                            </span>
-                            <span
-                              className={`text-[9px] font-bold px-1.5 py-0.2 rounded whitespace-nowrap ${
-                                order.payment?.status === "verified"
-                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                                  : "bg-amber-50 text-amber-700 border border-amber-200/60"
-                              }`}
-                            >
-                              {order.payment?.status === "verified" ? "Verified" : "Unverified"}
-                            </span>
-                          </div>
-                          <div className="font-mono text-[11px] font-bold text-emerald-700 mt-0.5 whitespace-nowrap truncate" title={order.payment?.trxId}>
-                            TrxID: {order.payment?.trxId}
-                          </div>
-                          <div className="font-mono text-[10px] text-gray-400 whitespace-nowrap">
-                            From: {order.payment?.senderNumber}
+                        {/* Payment Verification (Method name + 1-line: 01834923304(A34923304)) */}
+                        <td className="px-4 py-3.5 align-middle">
+                          <span className="font-bold uppercase text-gray-900 text-xs">
+                            {order.payment?.method || "bKash"}
+                          </span>
+                          <div
+                            className="font-mono text-[11px] text-gray-600 mt-0.5 truncate"
+                            title={order.payment?.senderNumber ? `${order.payment.senderNumber}(${order.payment.trxId || ""})` : order.payment?.trxId || "N/A"}
+                          >
+                            {order.payment?.senderNumber
+                              ? `${order.payment.senderNumber}(${order.payment?.trxId || ""})`
+                              : order.payment?.trxId || "N/A"}
                           </div>
                         </td>
 
@@ -481,26 +431,25 @@ export default function AdminOrdersPage() {
                           )}
                         </td>
 
-                        {/* Actions */}
+                        {/* Actions (View & Edit icons only, delete removed) */}
                         <td className="px-4 py-3.5 text-right whitespace-nowrap align-middle">
                           <div className="inline-flex items-center justify-end gap-1.5">
                             <button
                               type="button"
-                              onClick={() => handleOpenFulfill(order)}
-                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-(--primary) hover:bg-(--primary-hover) text-[11px] font-bold text-white shadow-2xs transition-all cursor-pointer whitespace-nowrap"
-                              title="Manage & Deliver License"
+                              onClick={() => handleOpenView(order)}
+                              className="p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:text-emerald-700 hover:border-emerald-300 hover:bg-emerald-50/70 transition-all cursor-pointer"
+                              title="View Full Details"
                             >
-                              <FiKey className="h-3 w-3 shrink-0" />
-                              <span>{isCompleted ? "Edit License" : "Deliver"}</span>
+                              <FiEye className="h-3.5 w-3.5" />
                             </button>
 
                             <button
                               type="button"
-                              onClick={() => handleDeleteOrder(order._id)}
-                              className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-red-600 hover:border-red-200 transition-colors cursor-pointer shrink-0"
-                              title="Delete Order"
+                              onClick={() => handleOpenFulfill(order)}
+                              className="p-1.5 rounded-lg bg-(--primary) hover:bg-(--primary-hover) text-white shadow-2xs transition-all cursor-pointer"
+                              title={isCompleted ? "Edit License" : "Deliver License"}
                             >
-                              <FiTrash2 className="h-3.5 w-3.5" />
+                              <FiEdit3 className="h-3.5 w-3.5" />
                             </button>
                           </div>
                         </td>
@@ -512,6 +461,19 @@ export default function AdminOrdersPage() {
             </div>
           </div>
         </>
+      )}
+
+      {/* Order Details View Modal */}
+      {isViewModalOpen && selectedOrder && (
+        <AdminOrderViewModal
+          isOpen={isViewModalOpen}
+          order={selectedOrder}
+          onClose={() => {
+            setIsViewModalOpen(false);
+            setSelectedOrder(null);
+          }}
+          onOpenFulfill={handleOpenFulfill}
+        />
       )}
 
       {/* Order Fulfill & Delivery Modal */}
