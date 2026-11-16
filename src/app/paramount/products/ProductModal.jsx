@@ -234,8 +234,15 @@ function ProductForm({ product, onClose, onSuccess }) {
 
     try {
       setSubmitting(true);
+      const productId = product?._id || product?.id;
+
+      if (isEditing && !productId) {
+        setFormError("Product ID is missing. Please close modal and try again.");
+        return;
+      }
+
       const url = isEditing
-        ? `${API_BASE_URL}/admin/products/${product._id}`
+        ? `${API_BASE_URL}/admin/products/${productId}`
         : `${API_BASE_URL}/admin/products`;
 
       const method = isEditing ? "PUT" : "POST";
@@ -264,8 +271,12 @@ function ProductForm({ product, onClose, onSuccess }) {
       onClose();
     } catch (err) {
       console.error("Save product error:", err);
-      setFormError(err.message || "Failed to save product.");
-      toast.error(err.message || "Operation failed.");
+      const errorMsg =
+        err.message === "Failed to fetch"
+          ? "Network error: Unable to connect to backend server. Please check connection."
+          : err.message || "Failed to save product.";
+      setFormError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setSubmitting(false);
     }
@@ -417,7 +428,7 @@ function ProductForm({ product, onClose, onSuccess }) {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-gray-700 mb-1.5 flex items-center gap-1">
+              <label className="flex items-center gap-1 text-xs font-bold text-gray-700 mb-1.5">
                 <FiStar className="h-3 w-3 text-amber-500 fill-amber-400" />
                 Rating & Reviews
               </label>
@@ -496,8 +507,8 @@ function ProductForm({ product, onClose, onSuccess }) {
                     className="hidden"
                   />
                 </label>
-                <span className="block text-[11px] text-gray-400 mt-1">
-                  Uploads directly to your ImgBB hosting (Max 5MB, PNG/JPG/WEBP).
+                <span className="block text-[11px] text-gray-500 mt-1">
+                  Uploads directly to your ImgBB hosting. <strong className="text-gray-700">Recommended: 950 × 700 px (approx. 4:3 ratio)</strong> for perfect fit without cropping.
                 </span>
               </div>
 
@@ -686,7 +697,7 @@ function ProductForm({ product, onClose, onSuccess }) {
                         handleUpdateVariant(index, "price", e.target.value)
                       }
                       placeholder="499"
-                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs text-gray-900 bg-white font-bold text-gray-900 focus:outline-none focus:ring-1 focus:ring-(--primary)"
+                      className="w-full px-3 py-2 rounded-xl border border-gray-200 text-xs bg-white font-bold text-gray-900 focus:outline-none focus:ring-1 focus:ring-(--primary)"
                     />
                   </div>
 

@@ -154,8 +154,10 @@ export default function AdminProductsPage() {
 
     try {
       setDeleting(true);
+      const targetId = deleteTarget._id || deleteTarget.id;
+
       const res = await fetch(
-        `${API_BASE_URL}/admin/products/${deleteTarget._id}`,
+        `${API_BASE_URL}/admin/products/${targetId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -169,10 +171,16 @@ export default function AdminProductsPage() {
       }
 
       toast.success(`"${deleteTarget.title}" deleted successfully!`);
-      setProducts((prev) => prev.filter((p) => p._id !== deleteTarget._id));
+      setProducts((prev) =>
+        prev.filter((p) => (p._id || p.id) !== targetId)
+      );
       setDeleteTarget(null);
     } catch (err) {
-      toast.error(err.message || "Could not delete product.");
+      const msg =
+        err.message === "Failed to fetch"
+          ? "Network error: Unable to connect to backend server."
+          : err.message || "Could not delete product.";
+      toast.error(msg);
     } finally {
       setDeleting(false);
     }

@@ -1,5 +1,8 @@
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
 /**
- * Upload an image file to ImgBB and return the hosted direct URL
+ * Upload an image file securely via backend server to ImgBB and return the hosted direct URL
  * @param {File} file - Image file to upload
  * @returns {Promise<string>} Hosted image URL
  */
@@ -10,22 +13,20 @@ export async function uploadImageToImgBB(file) {
 
   // Validate file type
   if (!file.type.startsWith("image/")) {
-    throw new Error("Selected file must be an image (PNG, JPG, WEBP).");
+    throw new Error("Selected file must be an image (PNG, JPG, JPEG, WEBP).");
   }
 
-  // Limit size to 5MB
-  if (file.size > 5 * 1024 * 1024) {
-    throw new Error("Image size must be less than 5MB.");
+  // Limit size to 10MB
+  if (file.size > 10 * 1024 * 1024) {
+    throw new Error("Image size must be less than 10MB.");
   }
-
-  const apiKey =
-    process.env.NEXT_PUBLIC_IMGBB_API_KEY || "9a66d03d09a2b535fa1947a505bfa802";
 
   const formData = new FormData();
   formData.append("image", file);
 
-  const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+  const response = await fetch(`${API_BASE_URL}/upload/image`, {
     method: "POST",
+    credentials: "include",
     body: formData,
   });
 
@@ -36,6 +37,6 @@ export async function uploadImageToImgBB(file) {
   }
 
   throw new Error(
-    result?.error?.message || "Failed to upload image. Please try again."
+    result?.message || "Failed to upload image. Please try again."
   );
 }
