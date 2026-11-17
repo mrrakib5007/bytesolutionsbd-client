@@ -127,9 +127,7 @@ function UserDashboardContent() {
                   <div className="mt-2.5">
                     <span
                       className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold shadow-2xs ${
-                        isAdmin
-                          ? "bg-slate-900 text-emerald-400"
-                          : "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                        "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
                       }`}
                     >
                       {isAdmin ? (
@@ -137,7 +135,7 @@ function UserDashboardContent() {
                       ) : (
                         <FiCheckCircle className="h-3 w-3" />
                       )}
-                      {isAdmin ? "Administrator" : "Verified Customer"}
+                      {isAdmin ? "Admin" : "User"}
                     </span>
                   </div>
                 </div>
@@ -276,7 +274,7 @@ function UserDashboardContent() {
                         My Orders
                       </h2>
                       <p className="text-xs text-gray-500">
-                        Overview of all placed purchases, payment status, and delivered license keys
+                        View orders, payments, and license details.
                       </p>
                     </div>
 
@@ -401,7 +399,7 @@ function UserDashboardContent() {
                       <div className="hidden lg:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
                         <div className="w-full overflow-hidden">
                           <table className="w-full text-left text-xs text-gray-600 border-collapse table-fixed">
-                            <colgroup><col className="w-[18%]" /><col className="w-[30%]" /><col className="w-[18%]" /><col className="w-[12%]" /><col className="w-[10%]" /><col className="w-[12%]" /></colgroup>
+                            <colgroup><col className="w-[15%]" /><col className="w-[23%]" /><col className="w-[12%]" /><col className="w-[12%]" /><col className="w-[10%]" /><col className="w-[20%]" /></colgroup>
                             <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                               <tr>
                                 <th className="px-5 py-3 whitespace-nowrap">Order ID</th>
@@ -452,7 +450,7 @@ function UserDashboardContent() {
                                       <span className="font-bold uppercase text-gray-800 text-[11px]">
                                         {order.payment?.method}
                                       </span>
-                                      <div className="font-mono text-[10px] text-gray-400 truncate max-w-[120px]" title={order.payment?.trxId}>
+                                      <div className="font-mono text-[10px] text-gray-400 truncate max-w-30" title={order.payment?.trxId}>
                                         {order.payment?.trxId}
                                       </div>
                                     </td>

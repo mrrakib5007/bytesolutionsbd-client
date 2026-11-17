@@ -416,7 +416,7 @@ export default function AdminUsersPage() {
                         Order Statistics
                       </span>
                       <p className="font-mono font-bold text-gray-900">
-                        {user.totalOrders || 0} order(s) • ৳ {(user.totalSpent || 0).toFixed(2)}
+                        {user.totalOrders || 0} orders • ৳ {(user.totalSpent || 0).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -429,15 +429,15 @@ export default function AdminUsersPage() {
           <div className="hidden xl:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
             <div className="w-full overflow-hidden">
               <table className="w-full text-left text-xs text-gray-600 border-collapse table-fixed">
-                <colgroup><col className="w-[26%]" /><col className="w-[18%]" /><col className="w-[18%]" /><col className="w-[14%]" /><col className="w-[12%]" /><col className="w-[12%]" /></colgroup>
+                <colgroup><col className="w-[26%]" /><col className="w-[15%]" /><col className="w-[15%]" /><col className="w-[14%]" /><col className="w-[12%]" /><col className="w-[18%]" /></colgroup>
                 <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                   <tr>
-                    <th className="w-[26%] px-4 py-3.5 whitespace-nowrap">User Info</th>
-                    <th className="w-[18%] px-4 py-3.5 whitespace-nowrap">WhatsApp / Phone</th>
-                    <th className="w-[18%] px-4 py-3.5 whitespace-nowrap">Role & Joined</th>
-                    <th className="w-[14%] px-4 py-3.5 whitespace-nowrap">Orders & Spend</th>
-                    <th className="w-[12%] px-4 py-3.5 text-center whitespace-nowrap">Status</th>
-                    <th className="w-[12%] px-4 py-3.5 text-right whitespace-nowrap pr-5">Actions</th>
+                    <th className="w-[26%] px-3 py-2.5 whitespace-nowrap">User Info</th>
+                    <th className="w-[15%] px-3 py-2.5 whitespace-nowrap">WhatsApp / Phone</th>
+                    <th className="w-[15%] px-3 py-2.5 whitespace-nowrap">Role & Joined</th>
+                    <th className="w-[14%] px-3 py-2.5 whitespace-nowrap">Orders & Spend</th>
+                    <th className="w-[12%] px-3 py-2.5 text-center whitespace-nowrap">Status</th>
+                    <th className="w-[18%] px-3 py-2.5 text-right whitespace-nowrap pr-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -449,22 +449,22 @@ export default function AdminUsersPage() {
                     return (
                       <tr key={user._id} className="hover:bg-gray-50/60 transition-colors">
                         {/* User Info (Avatar + Name + Email) */}
-                        <td className="w-[26%] px-4 py-3.5 align-middle">
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="relative h-10 w-10 rounded-full overflow-hidden border border-gray-200 bg-gray-50 shrink-0">
+                        <td className="w-[26%] px-3 py-2.5 align-middle">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="relative h-8 w-8 rounded-full overflow-hidden border border-gray-200 bg-gray-50 shrink-0">
                               <Image
                                 src={user.image || DEFAULT_IMAGE}
                                 alt={user.name || "User Avatar"}
                                 fill
-                                sizes="40px"
+                                sizes="32px"
                                 className="object-cover"
                               />
                             </div>
                             <div className="min-w-0">
-                              <p className="font-bold text-gray-900 truncate" title={user.name}>
+                              <p className="font-bold text-gray-900 truncate leading-tight" title={user.name}>
                                 {user.name}
                               </p>
-                              <p className="text-[11px] text-gray-500 truncate" title={user.email}>
+                              <p className="text-[11px] text-gray-500 truncate mt-0.5" title={user.email}>
                                 {user.email}
                               </p>
                             </div>
@@ -472,14 +472,14 @@ export default function AdminUsersPage() {
                         </td>
 
                         {/* WhatsApp / Phone */}
-                        <td className="w-[18%] px-4 py-3.5 whitespace-nowrap align-middle">
+                        <td className="w-[15%] px-3 py-2.5 whitespace-nowrap align-middle">
                           <div className="font-mono font-bold text-gray-800 text-xs">
                             {user.whatsapp ? `${user.countryCode || "+880"}${user.whatsapp}` : "Not provided"}
                           </div>
                         </td>
 
                         {/* Role & Joined Date */}
-                        <td className="w-[18%] px-4 py-3.5 whitespace-nowrap align-middle">
+                        <td className="w-[15%] px-3 py-2.5 whitespace-nowrap align-middle">
                           <div>
                             <span
                               className={`inline-flex items-center gap-1 rounded-full px-2 py-0.2 text-[10px] font-bold ${
@@ -492,15 +492,15 @@ export default function AdminUsersPage() {
                               {user.role === "admin" ? "Admin" : "Customer"}
                             </span>
                           </div>
-                          <div className="text-[11px] text-gray-400 mt-1 whitespace-nowrap">
+                          <div className="text-[10px] text-gray-400 mt-0.5 whitespace-nowrap">
                             {formatDhakaDateTime(user.createdAt)}
                           </div>
                         </td>
 
                         {/* Orders & Total Spend */}
-                        <td className="w-[14%] px-4 py-3.5 whitespace-nowrap align-middle">
+                        <td className="w-[14%] px-3 py-2.5 whitespace-nowrap align-middle">
                           <div className="font-mono font-bold text-gray-900 text-xs">
-                            {user.totalOrders || 0} order(s)
+                            {user.totalOrders || 0} orders
                           </div>
                           <div className="font-mono text-[11px] text-gray-500 mt-0.5 whitespace-nowrap">
                             ৳ {(user.totalSpent || 0).toFixed(2)}
@@ -508,7 +508,7 @@ export default function AdminUsersPage() {
                         </td>
 
                         {/* Status (Centered) */}
-                        <td className="w-[12%] px-4 py-3.5 text-center whitespace-nowrap align-middle">
+                        <td className="w-[12%] px-3 py-2.5 text-center whitespace-nowrap align-middle">
                           <div className="flex items-center justify-center">
                             <span
                               className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold whitespace-nowrap ${
@@ -532,8 +532,8 @@ export default function AdminUsersPage() {
                           </div>
                         </td>
 
-                        {/* Actions (View Details + Active/Deactive Toggle) */}
-                        <td className="w-[12%] px-4 py-3.5 text-right whitespace-nowrap align-middle pr-5">
+                        {/* Actions (View Details + Active/Deactive Toggle) - 18% Width Locked */}
+                        <td className="w-[18%] px-3 py-2.5 text-right whitespace-nowrap align-middle pr-4">
                           <div className="inline-flex items-center justify-end gap-1.5">
                             {/* Eye icon to view full details custom modal */}
                             <button

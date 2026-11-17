@@ -75,12 +75,12 @@ export default function AdminLayoutClient({ children }) {
           {/* Brand Header */}
           <div className="h-16 shrink-0 flex items-center justify-between px-6 border-b border-gray-200/80">
             <Logo
-              href="/paramount"
+              href="/"
               size="sm"
               textClassName="text-sm font-bold text-gray-900"
               subtitle={
                 <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-700 uppercase tracking-widest mt-0.5">
-                  <FiShield className="h-2.5 w-2.5 text-emerald-600" /> Paramount Console
+                  <FiShield className="h-2.5 w-2.5 text-emerald-600" /> Admin Panel
                 </span>
               }
             />
