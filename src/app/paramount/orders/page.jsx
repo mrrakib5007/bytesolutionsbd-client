@@ -11,10 +11,10 @@ import {
   FiClock,
   FiCheckCircle,
   FiAlertCircle,
-  FiEdit3,
   FiEye,
 } from "react-icons/fi";
 import { LuLoader } from "react-icons/lu";
+import { MdEdit } from "react-icons/md";
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -116,10 +116,10 @@ export default function AdminOrdersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-gray-900">
-            Order Management & Licenses
+            Order Management
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Review bKash / Nagad payments, approve orders, and deliver license keys or account credentials.
+            Manage payments, orders, and license delivery.
           </p>
         </div>
 
@@ -262,7 +262,7 @@ export default function AdminOrdersPage() {
                           className="p-2 rounded-xl bg-(--primary) hover:bg-(--primary-hover) text-white shadow-2xs transition-all cursor-pointer"
                           title={isCompleted ? "Edit License" : "Deliver License"}
                         >
-                          <FiEdit3 className="h-4 w-4" />
+                          <MdEdit className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
@@ -337,8 +337,8 @@ export default function AdminOrdersPage() {
                 <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                   <tr>
                     <th className="w-[15%] px-3.5 py-3.5 whitespace-nowrap">Order ID & Date</th>
-                    <th className="w-[16%] px-3.5 py-3.5 whitespace-nowrap">Customer</th>
-                    <th className="w-[21%] px-3.5 py-3.5 whitespace-nowrap">Items</th>
+                    <th className="w-[20%] px-3.5 py-3.5 whitespace-nowrap">Customer</th>
+                    <th className="w-[17%] px-3.5 py-3.5 whitespace-nowrap">Items</th>
                     <th className="w-[17%] px-3.5 py-3.5 whitespace-nowrap">Payment Verification</th>
                     <th className="w-[9%] px-3.5 py-3.5 whitespace-nowrap">Amount</th>
                     <th className="w-[11%] px-3.5 py-3.5 text-center whitespace-nowrap">Status</th>
@@ -451,7 +451,7 @@ export default function AdminOrdersPage() {
                               className="p-1.5 rounded-lg bg-(--primary) hover:bg-(--primary-hover) text-white shadow-2xs transition-all cursor-pointer"
                               title={isCompleted ? "Edit License" : "Deliver License"}
                             >
-                              <FiEdit3 className="h-3.5 w-3.5" />
+                              <MdEdit className="h-3.5 w-3.5" />
                             </button>
                           </div>
                         </td>
