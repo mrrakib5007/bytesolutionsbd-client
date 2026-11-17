@@ -62,7 +62,7 @@ export default function BannerSection() {
 
   return (
     <section className="relative flex min-h-[calc(100svh-4rem)] lg:h-[calc(100svh-4rem)] items-center overflow-hidden py-6 lg:py-0">
-      <div className="mx-auto w-full max-w-[95%] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
             <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3.5 py-1 text-xs font-semibold text-(--primary) shadow-xs sm:text-sm">

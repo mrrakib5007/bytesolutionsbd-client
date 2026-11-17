@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import ConfirmModal from "@/components/Shared/ConfirmModal";
 import {
   FiX,
   FiShield,
@@ -27,6 +28,7 @@ export default function AdminUserViewModal({
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [togglingStatus, setTogglingStatus] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   // Copy helper
   const handleCopy = (text, fieldName) => {
@@ -82,19 +84,16 @@ export default function AdminUserViewModal({
   const isSelf = user._id === currentAdminId;
   const isActive = user.isActive !== false;
 
-  const handleToggle = async () => {
+  const handleRequestToggle = () => {
     if (isSelf && isActive) {
       toast.error("You cannot deactivate your own admin account.");
       return;
     }
+    setIsConfirmOpen(true);
+  };
 
+  const handleExecuteToggle = async () => {
     const newStatus = !isActive;
-    const confirmMsg = newStatus
-      ? `Are you sure you want to activate ${user.name}'s account?`
-      : `Are you sure you want to deactivate ${user.name}'s account? They will be logged out and cannot sign in.`;
-
-    if (!confirm(confirmMsg)) return;
-
     setTogglingStatus(true);
     try {
       const res = await fetch(`http://localhost:5000/api/admin/users/${user._id}/status`, {
@@ -110,6 +109,7 @@ export default function AdminUserViewModal({
         if (onStatusToggled) {
           onStatusToggled(data.data);
         }
+        setIsConfirmOpen(false);
       } else {
         toast.error(data.message || "Failed to update account status.");
       }
@@ -265,7 +265,7 @@ export default function AdminUserViewModal({
             <button
               type="button"
               disabled={togglingStatus || (isSelf && isActive)}
-              onClick={handleToggle}
+              onClick={handleRequestToggle}
               className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
                 isActive
                   ? "bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100"
@@ -361,6 +361,22 @@ export default function AdminUserViewModal({
           </button>
         </div>
       </div>
+
+      {/* Custom Confirmation Popup Modal */}
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleExecuteToggle}
+        loading={togglingStatus}
+        variant={isActive ? "danger" : "success"}
+        title={isActive ? "Deactivate User Account?" : "Activate User Account?"}
+        message={
+          isActive
+            ? `Are you sure you want to deactivate ${user.name}'s account? They will be logged out and cannot sign in.`
+            : `Are you sure you want to activate ${user.name}'s account? The user will be able to sign in and use services.`
+        }
+        confirmText={isActive ? "Deactivate Account" : "Activate Account"}
+      />
     </div>
   );
 }

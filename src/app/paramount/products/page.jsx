@@ -444,13 +444,7 @@ export default function AdminProductsPage() {
           <div className="hidden xl:block rounded-2xl border border-gray-200/80 bg-white shadow-xs overflow-hidden">
             <div className="w-full overflow-hidden">
               <table className="w-full text-left border-collapse table-fixed">
-                <colgroup>
-                  <col className="w-[36%]" />
-                  <col className="w-[18%]" />
-                  <col className="w-[18%]" />
-                  <col className="w-[12%]" />
-                  <col className="w-[16%]" />
-                </colgroup>
+                <colgroup><col className="w-[36%]" /><col className="w-[18%]" /><col className="w-[18%]" /><col className="w-[12%]" /><col className="w-[16%]" /></colgroup>
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50/70 text-[11px] font-bold text-gray-600 uppercase tracking-wider">
                     <th className="py-3.5 px-4 sm:px-6 whitespace-nowrap">Product</th>

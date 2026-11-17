@@ -5,6 +5,7 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthContext";
 import AdminUserViewModal from "./AdminUserViewModal";
+import ConfirmModal from "@/components/Shared/ConfirmModal";
 import {
   FiUsers,
   FiSearch,
@@ -30,6 +31,7 @@ export default function AdminUsersPage() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState(null);
+  const [confirmModalData, setConfirmModalData] = useState(null);
 
   const DEFAULT_IMAGE = "https://i.ibb.co.com/ycfgs7BG/profile.jpg";
 
@@ -105,8 +107,8 @@ export default function AdminUsersPage() {
     setIsViewModalOpen(true);
   };
 
-  // Toggle user active / deactive account
-  const handleToggleStatus = async (user) => {
+  // Request user active / deactive account via custom ConfirmModal
+  const handleRequestToggleStatus = (user) => {
     const isSelf = user._id === currentAdminId;
     const isCurrentlyActive = user.isActive !== false;
 
@@ -116,11 +118,21 @@ export default function AdminUsersPage() {
     }
 
     const newStatus = !isCurrentlyActive;
-    const confirmMessage = newStatus
-      ? `Are you sure you want to activate ${user.name}'s account?`
-      : `Are you sure you want to deactivate ${user.name}'s account? The user will be logged out and cannot sign in.`;
+    setConfirmModalData({
+      user,
+      newStatus,
+      title: newStatus ? "Activate User Account?" : "Deactivate User Account?",
+      message: newStatus
+        ? `Are you sure you want to activate ${user.name}'s account? The user will be able to sign in and place orders.`
+        : `Are you sure you want to deactivate ${user.name}'s account? The user will be logged out and cannot sign in.`,
+      confirmText: newStatus ? "Activate Account" : "Deactivate Account",
+      variant: newStatus ? "success" : "danger",
+    });
+  };
 
-    if (!confirm(confirmMessage)) return;
+  const handleExecuteToggleStatus = async () => {
+    if (!confirmModalData?.user) return;
+    const { user, newStatus } = confirmModalData;
 
     setActionLoadingId(user._id);
     try {
@@ -143,6 +155,7 @@ export default function AdminUsersPage() {
         if (selectedUser && selectedUser._id === user._id) {
           setSelectedUser((prev) => ({ ...prev, isActive: newStatus }));
         }
+        setConfirmModalData(null);
       } else {
         toast.error(data.message || "Failed to update account status.");
       }
@@ -174,7 +187,7 @@ export default function AdminUsersPage() {
             Users Management
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Monitor customer accounts, review registration history, and toggle account activation status.
+          View users, track registrations, and manage account status.
           </p>
         </div>
 
@@ -351,7 +364,7 @@ export default function AdminUsersPage() {
                         <button
                           type="button"
                           disabled={isActionLoading || (isSelf && isActive)}
-                          onClick={() => handleToggleStatus(user)}
+                          onClick={() => handleRequestToggleStatus(user)}
                           className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed ${
                             isActive
                               ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200"
@@ -416,14 +429,7 @@ export default function AdminUsersPage() {
           <div className="hidden xl:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
             <div className="w-full overflow-hidden">
               <table className="w-full text-left text-xs text-gray-600 border-collapse table-fixed">
-                <colgroup>
-                  <col className="w-[26%]" /> {/* User Info */}
-                  <col className="w-[18%]" /> {/* Phone / WhatsApp */}
-                  <col className="w-[18%]" /> {/* Role & Joined */}
-                  <col className="w-[14%]" /> {/* Orders & Spend */}
-                  <col className="w-[12%]" /> {/* Status */}
-                  <col className="w-[12%]" /> {/* Actions */}
-                </colgroup>
+                <colgroup><col className="w-[26%]" /><col className="w-[18%]" /><col className="w-[18%]" /><col className="w-[14%]" /><col className="w-[12%]" /><col className="w-[12%]" /></colgroup>
                 <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                   <tr>
                     <th className="w-[26%] px-4 py-3.5 whitespace-nowrap">User Info</th>
@@ -468,7 +474,7 @@ export default function AdminUsersPage() {
                         {/* WhatsApp / Phone */}
                         <td className="w-[18%] px-4 py-3.5 whitespace-nowrap align-middle">
                           <div className="font-mono font-bold text-gray-800 text-xs">
-                            {user.whatsapp ? `${user.countryCode || "+880"} ${user.whatsapp}` : "Not provided"}
+                            {user.whatsapp ? `${user.countryCode || "+880"}${user.whatsapp}` : "Not provided"}
                           </div>
                         </td>
 
@@ -543,7 +549,7 @@ export default function AdminUsersPage() {
                             <button
                               type="button"
                               disabled={isActionLoading || (isSelf && isActive)}
-                              onClick={() => handleToggleStatus(user)}
+                              onClick={() => handleRequestToggleStatus(user)}
                               className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition-all shadow-2xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ${
                                 isActive
                                   ? "bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200/80"
@@ -589,6 +595,19 @@ export default function AdminUsersPage() {
             setSelectedUser(null);
           }}
           onStatusToggled={handleStatusToggledFromModal}
+        />
+      )}
+      {/* Custom Confirmation Popup Modal */}
+      {confirmModalData && (
+        <ConfirmModal
+          isOpen={Boolean(confirmModalData)}
+          onClose={() => setConfirmModalData(null)}
+          onConfirm={handleExecuteToggleStatus}
+          loading={actionLoadingId === confirmModalData.user?._id}
+          title={confirmModalData.title}
+          message={confirmModalData.message}
+          confirmText={confirmModalData.confirmText}
+          variant={confirmModalData.variant}
         />
       )}
     </div>

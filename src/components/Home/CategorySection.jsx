@@ -87,7 +87,7 @@ export default function CategorySection() {
 
   return (
     <section className="py-12 sm:py-16 lg:py-20 bg-neutral-50/60">
-      <div className="mx-auto w-full max-w-[95%] px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           badge="Categories"
           title="Browse by Category"

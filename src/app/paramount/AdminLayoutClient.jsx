@@ -246,7 +246,9 @@ export default function AdminLayoutClient({ children }) {
 
           {/* Scrollable Page Content */}
           <main className="mt-16 flex-1 p-4 sm:p-6 lg:p-8">
-            {children}
+            <div className="max-w-7xl mx-auto w-full">
+              {children}
+            </div>
           </main>
         </div>
       </div>

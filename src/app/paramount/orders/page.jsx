@@ -325,15 +325,7 @@ export default function AdminOrdersPage() {
           <div className="hidden xl:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
             <div className="w-full overflow-hidden">
               <table className="w-full text-left text-xs text-gray-600 border-collapse table-fixed">
-                <colgroup>
-                  <col className="w-[15%]" />
-                  <col className="w-[16%]" />
-                  <col className="w-[21%]" />
-                  <col className="w-[17%]" />
-                  <col className="w-[9%]" />
-                  <col className="w-[11%]" />
-                  <col className="w-[11%]" />
-                </colgroup>
+                <colgroup><col className="w-[15%]" /><col className="w-[16%]" /><col className="w-[21%]" /><col className="w-[17%]" /><col className="w-[9%]" /><col className="w-[11%]" /><col className="w-[11%]" /></colgroup>
                 <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                   <tr>
                     <th className="w-[15%] px-3.5 py-3.5 whitespace-nowrap">Order ID & Date</th>

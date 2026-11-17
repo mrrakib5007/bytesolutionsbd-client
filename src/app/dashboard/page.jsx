@@ -401,14 +401,7 @@ function UserDashboardContent() {
                       <div className="hidden lg:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
                         <div className="w-full overflow-hidden">
                           <table className="w-full text-left text-xs text-gray-600 border-collapse table-fixed">
-                            <colgroup>
-                              <col className="w-[18%]" />
-                              <col className="w-[30%]" />
-                              <col className="w-[18%]" />
-                              <col className="w-[12%]" />
-                              <col className="w-[10%]" />
-                              <col className="w-[12%]" />
-                            </colgroup>
+                            <colgroup><col className="w-[18%]" /><col className="w-[30%]" /><col className="w-[18%]" /><col className="w-[12%]" /><col className="w-[10%]" /><col className="w-[12%]" /></colgroup>
                             <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                               <tr>
                                 <th className="px-5 py-3 whitespace-nowrap">Order ID</th>
