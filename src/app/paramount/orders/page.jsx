@@ -326,23 +326,23 @@ export default function AdminOrdersPage() {
             <div className="w-full overflow-hidden">
               <table className="w-full text-left text-xs text-gray-600 border-collapse table-fixed">
                 <colgroup>
-                  <col className="w-[18%]" />
-                  <col className="w-[18%]" />
-                  <col className="w-[24%]" />
-                  <col className="w-[19%]" />
-                  <col className="w-[7%]" />
-                  <col className="w-[7%]" />
-                  <col className="w-[7%]" />
+                  <col className="w-[15%]" />
+                  <col className="w-[16%]" />
+                  <col className="w-[21%]" />
+                  <col className="w-[17%]" />
+                  <col className="w-[9%]" />
+                  <col className="w-[11%]" />
+                  <col className="w-[11%]" />
                 </colgroup>
                 <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                   <tr>
-                    <th className="px-4 py-3.5 whitespace-nowrap">Order ID & Date</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap">Customer</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap">Items</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap">Payment Verification</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap">Amount</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap">Status</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap text-right">Actions</th>
+                    <th className="w-[15%] px-3.5 py-3.5 whitespace-nowrap">Order ID & Date</th>
+                    <th className="w-[16%] px-3.5 py-3.5 whitespace-nowrap">Customer</th>
+                    <th className="w-[21%] px-3.5 py-3.5 whitespace-nowrap">Items</th>
+                    <th className="w-[17%] px-3.5 py-3.5 whitespace-nowrap">Payment Verification</th>
+                    <th className="w-[9%] px-3.5 py-3.5 whitespace-nowrap">Amount</th>
+                    <th className="w-[11%] px-3.5 py-3.5 text-center whitespace-nowrap">Status</th>
+                    <th className="w-[11%] px-3.5 py-3.5 text-right whitespace-nowrap pr-5">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -354,7 +354,7 @@ export default function AdminOrdersPage() {
                     return (
                       <tr key={order._id} className="hover:bg-gray-50/60 transition-colors">
                         {/* Order ID & Date (Dhaka Time) */}
-                        <td className="px-4 py-3.5 whitespace-nowrap align-middle">
+                        <td className="w-[15%] px-3.5 py-3.5 whitespace-nowrap align-middle">
                           <div className="font-mono font-bold text-gray-900 tracking-tight whitespace-nowrap truncate" title={order.orderId}>
                             {order.orderId}
                           </div>
@@ -364,7 +364,7 @@ export default function AdminOrdersPage() {
                         </td>
 
                         {/* Customer (Name & Email only) */}
-                        <td className="px-4 py-3.5 align-middle">
+                        <td className="w-[16%] px-3.5 py-3.5 align-middle">
                           <div className="font-bold text-gray-900 truncate" title={order.customer?.name}>
                             {order.customer?.name}
                           </div>
@@ -374,7 +374,7 @@ export default function AdminOrdersPage() {
                         </td>
 
                         {/* Items - 2 Lines: Product Name on Top, Duration × Qty Badge Underneath */}
-                        <td className="px-4 py-3.5 align-middle">
+                        <td className="w-[21%] px-3.5 py-3.5 align-middle">
                           <div className="space-y-1.5">
                             {order.items?.map((it, idx) => (
                               <div key={idx} className="flex flex-col items-start gap-0.5">
@@ -390,7 +390,7 @@ export default function AdminOrdersPage() {
                         </td>
 
                         {/* Payment Verification (Method name + 1-line: 01834923304(A34923304)) */}
-                        <td className="px-4 py-3.5 align-middle">
+                        <td className="w-[17%] px-3.5 py-3.5 align-middle">
                           <span className="font-bold uppercase text-gray-900 text-xs">
                             {order.payment?.method || "bKash"}
                           </span>
@@ -405,34 +405,36 @@ export default function AdminOrdersPage() {
                         </td>
 
                         {/* Total Amount */}
-                        <td className="px-4 py-3.5 font-bold font-mono text-gray-950 whitespace-nowrap align-middle">
+                        <td className="w-[9%] px-3.5 py-3.5 font-bold font-mono text-gray-950 whitespace-nowrap align-middle">
                           ৳ {order.totalAmount?.toFixed(2)}
                         </td>
 
                         {/* Status */}
-                        <td className="px-4 py-3.5 whitespace-nowrap align-middle">
-                          {isCompleted && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 whitespace-nowrap">
-                              <FiCheckCircle className="h-3 w-3" />
-                              Completed
-                            </span>
-                          )}
-                          {isPending && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 text-[10px] font-bold text-amber-700 whitespace-nowrap">
-                              <FiClock className="h-3 w-3" />
-                              Pending
-                            </span>
-                          )}
-                          {isCancelled && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 border border-red-200/60 px-2.5 py-0.5 text-[10px] font-bold text-red-700 whitespace-nowrap">
-                              <FiAlertCircle className="h-3 w-3" />
-                              Cancelled
-                            </span>
-                          )}
+                        <td className="w-[11%] px-3.5 py-3.5 text-center whitespace-nowrap align-middle">
+                          <div className="flex items-center justify-center">
+                            {isCompleted && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 whitespace-nowrap">
+                                <FiCheckCircle className="h-3 w-3 shrink-0" />
+                                Completed
+                              </span>
+                            )}
+                            {isPending && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 text-[10px] font-bold text-amber-700 whitespace-nowrap">
+                                <FiClock className="h-3 w-3 shrink-0" />
+                                Pending
+                              </span>
+                            )}
+                            {isCancelled && (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-red-50 border border-red-200/60 px-2.5 py-0.5 text-[10px] font-bold text-red-700 whitespace-nowrap">
+                                <FiAlertCircle className="h-3 w-3 shrink-0" />
+                                Cancelled
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         {/* Actions (View & Edit icons only, delete removed) */}
-                        <td className="px-4 py-3.5 text-right whitespace-nowrap align-middle">
+                        <td className="w-[11%] px-3.5 py-3.5 text-right whitespace-nowrap align-middle pr-5">
                           <div className="inline-flex items-center justify-end gap-1.5">
                             <button
                               type="button"
