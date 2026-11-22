@@ -1,9 +1,9 @@
 import SignupForm from "../signup/SignupForm";
 
 export const metadata = {
-  title: "Sign Up - Soft License Hub",
+  title: "Sign Up - Byte Solutions BD",
   description:
-    "Create an account on Soft License Hub to access genuine software licenses, instant downloads, and subscriptions.",
+    "Create an account on Byte Solutions BD to access genuine software licenses, instant downloads, and subscriptions.",
 };
 
 export default function RegisterPage() {

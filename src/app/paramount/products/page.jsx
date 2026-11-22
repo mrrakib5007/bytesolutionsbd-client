@@ -33,6 +33,8 @@ export default function AdminProductsPage() {
   // Search & Filter
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [togglingId, setTogglingId] = useState(null);
 
   // Modals state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -132,9 +134,56 @@ export default function AdminProductsPage() {
       const matchesCategory =
         selectedCategory === "All" || p.category === selectedCategory;
 
-      return matchesSearch && matchesCategory;
+      const isActive = p.isActive !== false;
+      const matchesStatus =
+        selectedStatus === "All" ||
+        (selectedStatus === "Active" && isActive) ||
+        (selectedStatus === "Inactive" && !isActive);
+
+      return matchesSearch && matchesCategory && matchesStatus;
     });
-  }, [products, searchTerm, selectedCategory]);
+  }, [products, searchTerm, selectedCategory, selectedStatus]);
+
+  // Toggle Active/Inactive status
+  const handleToggleStatus = async (product) => {
+    const targetId = product._id || product.id;
+    if (!targetId || togglingId) return;
+
+    const currentStatus = product.isActive !== false;
+    const nextStatus = !currentStatus;
+
+    try {
+      setTogglingId(targetId);
+      const res = await fetch(
+        `${API_BASE_URL}/admin/products/${targetId}/toggle-status`,
+        {
+          method: "PATCH",
+          credentials: "include",
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Failed to toggle status.");
+      }
+
+      setProducts((prev) =>
+        prev.map((p) =>
+          (p._id || p.id) === targetId ? { ...p, isActive: nextStatus } : p
+        )
+      );
+
+      toast.success(
+        `"${product.title}" is now ${
+          nextStatus ? "active and visible" : "deactivated and hidden"
+        }.`
+      );
+    } catch (err) {
+      toast.error(err.message || "Could not toggle product status.");
+    } finally {
+      setTogglingId(null);
+    }
+  };
 
   // Open Add Product
   const handleOpenAdd = () => {
@@ -191,13 +240,21 @@ export default function AdminProductsPage() {
       {/* Top Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h2 className="text-xl font-extrabold tracking-tight text-gray-900">
               Products Management
             </h2>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              {products.length} Products
+              {products.length} Total
             </span>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">
+              {products.filter((p) => p.isActive !== false).length} Active
+            </span>
+            {products.some((p) => p.isActive === false) && (
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                {products.filter((p) => p.isActive === false).length} Deactivated
+              </span>
+            )}
           </div>
           <p className="text-xs text-gray-500 mt-0.5">
             Create, edit, price, and maintain digital licenses and software keys
@@ -252,7 +309,7 @@ export default function AdminProductsPage() {
           )}
         </div>
 
-        {/* Category Filter Pills / Dropdown */}
+        {/* Category & Status Filter Pills / Dropdown */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
           <FiTag className="h-3.5 w-3.5 text-gray-400 shrink-0 hidden sm:block" />
           <select
@@ -265,6 +322,16 @@ export default function AdminProductsPage() {
                 {cat === "All" ? "All Categories" : cat}
               </option>
             ))}
+          </select>
+
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="px-3 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-(--primary)/30 focus:border-(--primary)"
+          >
+            <option value="All">All Status</option>
+            <option value="Active">Active in Store</option>
+            <option value="Inactive">Deactivated (Hidden)</option>
           </select>
         </div>
       </div>
@@ -328,7 +395,9 @@ export default function AdminProductsPage() {
               return (
                 <div
                   key={product._id}
-                  className="rounded-2xl border border-gray-200/90 bg-white p-4 shadow-xs space-y-3.5"
+                  className={`rounded-2xl border border-gray-200/90 bg-white p-4 shadow-xs space-y-3.5 ${
+                    product.isActive === false ? "bg-gray-50/50 opacity-85" : ""
+                  }`}
                 >
                   <div className="flex items-start gap-3">
                     <div className="relative h-14 w-14 shrink-0 rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
@@ -374,6 +443,15 @@ export default function AdminProductsPage() {
                             {product.badge}
                           </span>
                         )}
+                        <span
+                          className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                            product.isActive !== false
+                              ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                              : "bg-gray-100 text-gray-500 border border-gray-200"
+                          }`}
+                        >
+                          {product.isActive !== false ? "Active" : "Deactivated"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -407,33 +485,51 @@ export default function AdminProductsPage() {
                   </div>
 
                   {/* Actions Footer */}
-                  <div className="flex items-center justify-end gap-2 border-t border-gray-100 pt-2.5">
-                    <Link
-                      href={`/products/${product.slug}`}
-                      target="_blank"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                    >
-                      <FiExternalLink className="h-3.5 w-3.5" />
-                      <span>Live</span>
-                    </Link>
+                  <div className="flex items-center justify-between gap-2 border-t border-gray-100 pt-2.5">
+                    <div className="flex items-center gap-2">
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={product.isActive !== false}
+                          onChange={() => handleToggleStatus(product)}
+                          disabled={togglingId === (product._id || product.id)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-(--primary) peer-disabled:opacity-50" />
+                      </label>
+                      <span className="text-[11px] font-semibold text-gray-600">
+                        {product.isActive !== false ? "Active" : "Hidden"}
+                      </span>
+                    </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleOpenEdit(product)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold hover:bg-blue-100 transition-colors cursor-pointer"
-                    >
-                      <FiEdit2 className="h-3.5 w-3.5" />
-                      <span>Edit</span>
-                    </button>
+                    <div className="flex items-center gap-1.5">
+                      <Link
+                        href={`/products/${product.slug}`}
+                        target="_blank"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <FiExternalLink className="h-3.5 w-3.5" />
+                        <span>Live</span>
+                      </Link>
 
-                    <button
-                      type="button"
-                      onClick={() => setDeleteTarget(product)}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold hover:bg-rose-100 transition-colors cursor-pointer"
-                    >
-                      <FiTrash2 className="h-3.5 w-3.5" />
-                      <span>Delete</span>
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEdit(product)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 text-xs font-semibold hover:bg-blue-100 transition-colors cursor-pointer"
+                      >
+                        <FiEdit2 className="h-3.5 w-3.5" />
+                        <span>Edit</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setDeleteTarget(product)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-semibold hover:bg-rose-100 transition-colors cursor-pointer"
+                      >
+                        <FiTrash2 className="h-3.5 w-3.5" />
+                        <span>Delete</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
@@ -444,13 +540,21 @@ export default function AdminProductsPage() {
           <div className="hidden xl:block rounded-2xl border border-gray-200/80 bg-white shadow-xs overflow-hidden">
             <div className="w-full overflow-hidden">
               <table className="w-full text-left border-collapse table-fixed">
-                <colgroup><col className="w-[36%]" /><col className="w-[18%]" /><col className="w-[18%]" /><col className="w-[12%]" /><col className="w-[16%]" /></colgroup>
+                <colgroup>
+                  <col className="w-[30%]" />
+                  <col className="w-[16%]" />
+                  <col className="w-[16%]" />
+                  <col className="w-[11%]" />
+                  <col className="w-[13%]" />
+                  <col className="w-[14%]" />
+                </colgroup>
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50/70 text-[11px] font-bold text-gray-600 uppercase tracking-wider">
                     <th className="py-3.5 px-4 sm:px-6 whitespace-nowrap">Product</th>
                     <th className="py-3.5 px-4 whitespace-nowrap">Category & Badge</th>
                     <th className="py-3.5 px-4 whitespace-nowrap">Pricing Plans</th>
                     <th className="py-3.5 px-4 whitespace-nowrap">Rating</th>
+                    <th className="py-3.5 px-4 whitespace-nowrap">Status</th>
                     <th className="py-3.5 px-4 sm:px-6 text-right whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
@@ -464,7 +568,9 @@ export default function AdminProductsPage() {
                     return (
                       <tr
                         key={product._id}
-                        className="hover:bg-slate-50/60 transition-colors"
+                        className={`hover:bg-slate-50/60 transition-colors ${
+                          product.isActive === false ? "bg-gray-50/50 opacity-85" : ""
+                        }`}
                       >
                         {/* Product Thumbnail & Details */}
                         <td className="py-4 px-4 sm:px-6 whitespace-nowrap">
@@ -547,6 +653,31 @@ export default function AdminProductsPage() {
                             </span>
                             <span className="text-[11px] text-gray-400">
                               ({product.reviewsCount ?? 0})
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Status Toggle & Badge */}
+                        <td className="py-4 px-4 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <label className="relative inline-flex items-center cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={product.isActive !== false}
+                                onChange={() => handleToggleStatus(product)}
+                                disabled={togglingId === (product._id || product.id)}
+                                className="sr-only peer"
+                              />
+                              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-(--primary) peer-disabled:opacity-50" />
+                            </label>
+                            <span
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                product.isActive !== false
+                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200/70"
+                                  : "bg-gray-100 text-gray-500 border border-gray-200"
+                              }`}
+                            >
+                              {product.isActive !== false ? "Active" : "Inactive"}
                             </span>
                           </div>
                         </td>

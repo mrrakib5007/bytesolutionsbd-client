@@ -3,9 +3,9 @@ import LoginForm from "./LoginForm";
 import Loading from "@/components/Loading";
 
 export const metadata = {
-  title: "Login - Soft License Hub",
+  title: "Login - Byte Solutions BD",
   description:
-    "Log in to your Soft License Hub account to manage your licenses, access digital downloads, and track purchases.",
+    "Log in to your Byte Solutions BD account to manage your licenses, access digital downloads, and track purchases.",
 };
 
 export default function LoginPage() {

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { FiHome, FiShoppingBag, FiArrowLeft } from "react-icons/fi";
+import { FiHome, FiArrowLeft } from "react-icons/fi";
+import { LuShoppingBag } from "react-icons/lu";
 
 export default function NotFound() {
   return (
@@ -32,7 +33,7 @@ export default function NotFound() {
             href="/products"
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow-xs transition-all duration-200 hover:bg-gray-50 hover:text-[#16A34A] active:scale-95 sm:w-auto"
           >
-            <FiShoppingBag className="h-4 w-4" />
+            <LuShoppingBag className="h-4 w-4" />
             <span>Browse Products</span>
           </Link>
         </div>

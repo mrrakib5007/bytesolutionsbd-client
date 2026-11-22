@@ -7,7 +7,6 @@ import ConfirmModal from "@/components/Shared/ConfirmModal";
 import {
   FiX,
   FiShield,
-  FiShoppingBag,
   FiCheckCircle,
   FiAlertCircle,
   FiCopy,
@@ -25,10 +24,9 @@ export default function AdminUserViewModal({
   onStatusToggled,
 }) {
   const [copiedField, setCopiedField] = useState(null);
-  const [orders, setOrders] = useState([]);
-  const [loadingOrders, setLoadingOrders] = useState(true);
   const [togglingStatus, setTogglingStatus] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [deactivationNote, setDeactivationNote] = useState("");
 
   // Copy helper
   const handleCopy = (text, fieldName) => {
@@ -53,32 +51,6 @@ export default function AdminUserViewModal({
     });
   };
 
-  // Fetch full user details with order history when modal opens
-  const fetchUserDetails = async () => {
-    if (!user?._id) return;
-    setLoadingOrders(true);
-    try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${user._id}`, {
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (res.ok && data.success && data.data?.orders) {
-        setOrders(data.data.orders);
-      }
-    } catch (err) {
-      console.error("Failed to load user orders:", err);
-    } finally {
-      setLoadingOrders(false);
-    }
-  };
-
-  // Trigger load on open
-  useState(() => {
-    if (isOpen && user?._id) {
-      fetchUserDetails();
-    }
-  });
-
   if (!isOpen || !user) return null;
 
   const isSelf = user._id === currentAdminId;
@@ -88,6 +60,9 @@ export default function AdminUserViewModal({
     if (isSelf && isActive) {
       toast.error("You cannot deactivate your own admin account.");
       return;
+    }
+    if (isActive) {
+      setDeactivationNote(user.deactivationNote || "");
     }
     setIsConfirmOpen(true);
   };
@@ -100,7 +75,10 @@ export default function AdminUserViewModal({
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ isActive: newStatus }),
+        body: JSON.stringify({
+          isActive: newStatus,
+          ...(newStatus === false && { deactivationNote: deactivationNote.trim() }),
+        }),
       });
       const data = await res.json();
 
@@ -110,6 +88,7 @@ export default function AdminUserViewModal({
           onStatusToggled(data.data);
         }
         setIsConfirmOpen(false);
+        setDeactivationNote("");
       } else {
         toast.error(data.message || "Failed to update account status.");
       }
@@ -188,6 +167,42 @@ export default function AdminUserViewModal({
           </button>
         </div>
 
+        {/* Deactivation Banner & Admin Internal Reason */}
+        {!isActive && (
+          <div className="rounded-2xl border border-rose-200 bg-rose-50/70 p-4 space-y-2.5">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2 text-rose-800 font-bold text-xs">
+                <FiAlertCircle className="h-4 w-4 text-rose-600 shrink-0" />
+                <span>Account Deactivated by Administration</span>
+              </div>
+              {user.deactivatedAt && (
+                <span className="text-[11px] font-mono text-rose-600 font-semibold">
+                  {formatDhakaDateTime(user.deactivatedAt)}
+                </span>
+              )}
+            </div>
+
+            <div className="rounded-xl bg-white/90 border border-rose-200/70 p-3 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                  Internal Reason / Admin Note:
+                </span>
+                <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/60">
+                  🔒 Hidden from Customer
+                </span>
+              </div>
+              <p className="text-xs text-gray-900 font-medium whitespace-pre-wrap">
+                {user.deactivationNote || "No specific note was recorded during deactivation."}
+              </p>
+              {user.deactivatedBy && (
+                <span className="text-[10px] text-gray-400 block pt-0.5">
+                  Action taken by: {user.deactivatedBy}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Contact & Account Info Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           {/* Email Card */}
@@ -223,12 +238,23 @@ export default function AdminUserViewModal({
             </span>
             <div className="flex items-center justify-between gap-2">
               <span className="font-mono font-bold text-emerald-800 truncate">
-                {user.whatsapp ? `${user.countryCode || "+880"} ${user.whatsapp}` : "Not provided"}
+                {user.whatsapp
+                  ? user.whatsapp.startsWith("+")
+                    ? user.whatsapp
+                    : `${user.countryCode || "+880"} ${user.whatsapp}`
+                  : "Not provided"}
               </span>
               {user.whatsapp && (
                 <button
                   type="button"
-                  onClick={() => handleCopy(`${user.countryCode || "+880"}${user.whatsapp}`, "Phone")}
+                  onClick={() =>
+                    handleCopy(
+                      user.whatsapp.startsWith("+")
+                        ? user.whatsapp
+                        : `${user.countryCode || "+880"}${user.whatsapp}`,
+                      "Phone"
+                    )
+                  }
                   className="p-1 text-gray-400 hover:text-gray-700 cursor-pointer shrink-0"
                   title="Copy phone"
                 >
@@ -243,25 +269,39 @@ export default function AdminUserViewModal({
           </div>
         </div>
 
-        {/* Customer Stats & Fast Status Toggle */}
-        <div className="p-4 rounded-2xl border border-gray-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-6 text-xs">
-            <div>
-              <span className="text-[10px] text-gray-400 block uppercase font-bold">Total Orders</span>
-              <span className="font-extrabold text-base text-gray-900 font-mono">
-                {user.totalOrders ?? orders.length ?? 0}
+        {/* Account Security & Fast Status Toggle */}
+        <div className="p-4 rounded-2xl border border-gray-200 bg-gray-50/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span className="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">
+              Account Status
+            </span>
+            <div className="flex items-center gap-2 mt-1">
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                  isActive
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
+                    : "bg-rose-50 text-rose-700 border border-rose-200/60"
+                }`}
+              >
+                {isActive ? (
+                  <>
+                    <FiCheckCircle className="h-3.5 w-3.5" /> Active Account
+                  </>
+                ) : (
+                  <>
+                    <FiAlertCircle className="h-3.5 w-3.5" /> Deactivated
+                  </>
+                )}
               </span>
-            </div>
-            <div className="h-8 w-px bg-gray-200" />
-            <div>
-              <span className="text-[10px] text-gray-400 block uppercase font-bold">Total Spent</span>
-              <span className="font-extrabold text-base text-gray-950 font-mono">
-                ৳ {(user.totalSpent || 0).toFixed(2)}
+              <span className="text-xs text-gray-500">
+                {isActive
+                  ? "User has full access to login and make purchases."
+                  : "User is blocked from logging in or placing orders."}
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
               disabled={togglingStatus || (isSelf && isActive)}
@@ -286,70 +326,6 @@ export default function AdminUserViewModal({
           </div>
         </div>
 
-        {/* User Order History Section */}
-        <div className="space-y-3">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1.5">
-            <FiShoppingBag className="h-3.5 w-3.5 text-gray-400" />
-            Order History ({orders.length})
-          </h3>
-
-          {loadingOrders ? (
-            <div className="p-8 rounded-2xl bg-gray-50 border border-gray-100 text-center">
-              <LuLoader className="h-5 w-5 animate-spin mx-auto text-(--primary)" />
-              <p className="text-xs text-gray-400 mt-1">Loading customer orders...</p>
-            </div>
-          ) : orders.length === 0 ? (
-            <div className="p-8 rounded-2xl bg-gray-50 border border-gray-100 text-center text-xs text-gray-400">
-              This user has not placed any orders yet.
-            </div>
-          ) : (
-            <div className="space-y-2 max-h-56 overflow-y-auto slim-scrollbar pr-1">
-              {orders.map((ord) => {
-                const ordCompleted = ord.orderStatus === "completed";
-                const ordPending = ord.orderStatus === "pending";
-
-                return (
-                  <div
-                    key={ord._id}
-                    className="p-3 rounded-xl border border-gray-200/80 bg-white flex items-center justify-between gap-3 text-xs"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono font-bold text-gray-900">
-                          {ord.orderId}
-                        </span>
-                        <span
-                          className={`text-[9px] font-bold px-1.5 py-0.2 rounded-full ${
-                            ordCompleted
-                              ? "bg-emerald-50 text-emerald-700"
-                              : ordPending
-                              ? "bg-amber-50 text-amber-700"
-                              : "bg-red-50 text-red-700"
-                          }`}
-                        >
-                          {ord.orderStatus}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-gray-400 mt-0.5">
-                        {formatDhakaDateTime(ord.createdAt)} • {ord.items?.length || 0} item(s)
-                      </p>
-                    </div>
-
-                    <div className="text-right">
-                      <span className="font-mono font-bold text-gray-950">
-                        ৳ {ord.totalAmount?.toFixed(2)}
-                      </span>
-                      <span className="text-[10px] text-gray-400 block uppercase font-mono">
-                        {ord.payment?.method}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
         {/* Modal Actions Footer */}
         <div className="flex items-center justify-end pt-3 border-t border-gray-100">
           <button
@@ -365,18 +341,44 @@ export default function AdminUserViewModal({
       {/* Custom Confirmation Popup Modal */}
       <ConfirmModal
         isOpen={isConfirmOpen}
-        onClose={() => setIsConfirmOpen(false)}
+        onClose={() => {
+          setIsConfirmOpen(false);
+          setDeactivationNote("");
+        }}
         onConfirm={handleExecuteToggle}
         loading={togglingStatus}
         variant={isActive ? "danger" : "success"}
         title={isActive ? "Deactivate User Account?" : "Activate User Account?"}
         message={
           isActive
-            ? `Are you sure you want to deactivate ${user.name}'s account? They will be logged out and cannot sign in.`
+            ? `Are you sure you want to deactivate ${user.name}'s account? They will be immediately logged out and cannot sign in.`
             : `Are you sure you want to activate ${user.name}'s account? The user will be able to sign in and use services.`
         }
         confirmText={isActive ? "Deactivate Account" : "Activate Account"}
-      />
+      >
+        {isActive && (
+          <div className="space-y-1.5 mt-2">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-gray-700">
+                Reason for Deactivation (Admin Note)
+              </label>
+              <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                🔒 Admin Only
+              </span>
+            </div>
+            <textarea
+              rows={3}
+              value={deactivationNote}
+              onChange={(e) => setDeactivationNote(e.target.value)}
+              placeholder="e.g. Suspicious payment activity, fake account info, policy violation..."
+              className="w-full p-2.5 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 resize-none"
+            />
+            <p className="text-[10px] text-gray-400">
+              This note is strictly internal. The customer will NOT see this reason.
+            </p>
+          </div>
+        )}
+      </ConfirmModal>
     </div>
   );
 }

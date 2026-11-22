@@ -32,6 +32,7 @@ export default function AdminUsersPage() {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState(null);
   const [confirmModalData, setConfirmModalData] = useState(null);
+  const [deactivationNote, setDeactivationNote] = useState("");
 
   const DEFAULT_IMAGE = "https://i.ibb.co.com/ycfgs7BG/profile.jpg";
 
@@ -118,13 +119,14 @@ export default function AdminUsersPage() {
     }
 
     const newStatus = !isCurrentlyActive;
+    setDeactivationNote(user.deactivationNote || "");
     setConfirmModalData({
       user,
       newStatus,
       title: newStatus ? "Activate User Account?" : "Deactivate User Account?",
       message: newStatus
         ? `Are you sure you want to activate ${user.name}'s account? The user will be able to sign in and place orders.`
-        : `Are you sure you want to deactivate ${user.name}'s account? The user will be logged out and cannot sign in.`,
+        : `Are you sure you want to deactivate ${user.name}'s account? The user will be immediately logged out and blocked from signing in.`,
       confirmText: newStatus ? "Activate Account" : "Deactivate Account",
       variant: newStatus ? "success" : "danger",
     });
@@ -142,20 +144,31 @@ export default function AdminUsersPage() {
           "Content-Type": "application/json",
         },
         credentials: "include",
-        body: JSON.stringify({ isActive: newStatus }),
+        body: JSON.stringify({
+          isActive: newStatus,
+          ...(newStatus === false && { deactivationNote: deactivationNote.trim() }),
+        }),
       });
 
       const data = await res.json();
 
       if (res.ok && data.success) {
         toast.success(data.message || `Account ${newStatus ? "activated" : "deactivated"} successfully!`);
+        const updatedUser = {
+          ...user,
+          isActive: newStatus,
+          deactivationNote: newStatus ? null : deactivationNote.trim(),
+          deactivatedAt: newStatus ? null : new Date().toISOString(),
+          deactivatedBy: newStatus ? null : currentAdmin?.email || "Admin",
+        };
         setUsers((prev) =>
-          prev.map((u) => (u._id === user._id ? { ...u, isActive: newStatus } : u))
+          prev.map((u) => (u._id === user._id ? updatedUser : u))
         );
         if (selectedUser && selectedUser._id === user._id) {
-          setSelectedUser((prev) => ({ ...prev, isActive: newStatus }));
+          setSelectedUser(updatedUser);
         }
         setConfirmModalData(null);
+        setDeactivationNote("");
       } else {
         toast.error(data.message || "Failed to update account status.");
       }
@@ -391,14 +404,18 @@ export default function AdminUsersPage() {
                     </div>
                   </div>
 
-                  {/* Info Grid: WhatsApp, Joined Date, Orders */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                  {/* Info Grid: WhatsApp & Registration Date */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-0.5">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
                         WhatsApp / Phone
                       </span>
                       <p className="font-mono font-bold text-emerald-800 truncate">
-                        {user.whatsapp ? `${user.countryCode || "+880"} ${user.whatsapp}` : "Not provided"}
+                        {user.whatsapp
+                          ? user.whatsapp.startsWith("+")
+                            ? user.whatsapp
+                            : `${user.countryCode || "+880"} ${user.whatsapp}`
+                          : "Not provided"}
                       </p>
                     </div>
 
@@ -410,16 +427,19 @@ export default function AdminUsersPage() {
                         {formatDhakaDateTime(user.createdAt)}
                       </p>
                     </div>
+                  </div>
 
-                    <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-0.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
-                        Order Statistics
+                  {/* Internal Admin Note if Deactivated */}
+                  {!isActive && user.deactivationNote && (
+                    <div className="rounded-xl bg-rose-50/80 border border-rose-200/70 p-2.5 text-xs text-rose-900">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-rose-700 block">
+                        🔒 Deactivation Reason (Admin Note):
                       </span>
-                      <p className="font-mono font-bold text-gray-900">
-                        {user.totalOrders || 0} orders • ৳ {(user.totalSpent || 0).toFixed(2)}
+                      <p className="text-[11px] font-medium mt-0.5 whitespace-pre-wrap">
+                        {user.deactivationNote}
                       </p>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
@@ -429,15 +449,20 @@ export default function AdminUsersPage() {
           <div className="hidden xl:block rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xs">
             <div className="w-full overflow-hidden">
               <table className="w-full text-left text-xs text-gray-600 border-collapse table-fixed">
-                <colgroup><col className="w-[26%]" /><col className="w-[15%]" /><col className="w-[15%]" /><col className="w-[14%]" /><col className="w-[12%]" /><col className="w-[18%]" /></colgroup>
+                <colgroup>
+                  <col className="w-[32%]" />
+                  <col className="w-[20%]" />
+                  <col className="w-[20%]" />
+                  <col className="w-[12%]" />
+                  <col className="w-[16%]" />
+                </colgroup>
                 <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                   <tr>
-                    <th className="w-[26%] px-3 py-2.5 whitespace-nowrap">User Info</th>
-                    <th className="w-[15%] px-3 py-2.5 whitespace-nowrap">WhatsApp / Phone</th>
-                    <th className="w-[15%] px-3 py-2.5 whitespace-nowrap">Role & Joined</th>
-                    <th className="w-[14%] px-3 py-2.5 whitespace-nowrap">Orders & Spend</th>
+                    <th className="w-[32%] px-3 py-2.5 whitespace-nowrap">User Info</th>
+                    <th className="w-[20%] px-3 py-2.5 whitespace-nowrap">WhatsApp / Phone</th>
+                    <th className="w-[20%] px-3 py-2.5 whitespace-nowrap">Role & Joined</th>
                     <th className="w-[12%] px-3 py-2.5 text-center whitespace-nowrap">Status</th>
-                    <th className="w-[18%] px-3 py-2.5 text-right whitespace-nowrap pr-4">Actions</th>
+                    <th className="w-[16%] px-3 py-2.5 text-right whitespace-nowrap pr-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -449,7 +474,7 @@ export default function AdminUsersPage() {
                     return (
                       <tr key={user._id} className="hover:bg-gray-50/60 transition-colors">
                         {/* User Info (Avatar + Name + Email) */}
-                        <td className="w-[26%] px-3 py-2.5 align-middle">
+                        <td className="w-[32%] px-3 py-2.5 align-middle">
                           <div className="flex items-center gap-2.5 min-w-0">
                             <div className="relative h-8 w-8 rounded-full overflow-hidden border border-gray-200 bg-gray-50 shrink-0">
                               <Image
@@ -472,14 +497,18 @@ export default function AdminUsersPage() {
                         </td>
 
                         {/* WhatsApp / Phone */}
-                        <td className="w-[15%] px-3 py-2.5 whitespace-nowrap align-middle">
+                        <td className="w-[20%] px-3 py-2.5 whitespace-nowrap align-middle">
                           <div className="font-mono font-bold text-gray-800 text-xs">
-                            {user.whatsapp ? `${user.countryCode || "+880"}${user.whatsapp}` : "Not provided"}
+                            {user.whatsapp
+                              ? user.whatsapp.startsWith("+")
+                                ? user.whatsapp
+                                : `${user.countryCode || "+880"}${user.whatsapp}`
+                              : "Not provided"}
                           </div>
                         </td>
 
                         {/* Role & Joined Date */}
-                        <td className="w-[15%] px-3 py-2.5 whitespace-nowrap align-middle">
+                        <td className="w-[20%] px-3 py-2.5 whitespace-nowrap align-middle">
                           <div>
                             <span
                               className={`inline-flex items-center gap-1 rounded-full px-2 py-0.2 text-[10px] font-bold ${
@@ -497,19 +526,9 @@ export default function AdminUsersPage() {
                           </div>
                         </td>
 
-                        {/* Orders & Total Spend */}
-                        <td className="w-[14%] px-3 py-2.5 whitespace-nowrap align-middle">
-                          <div className="font-mono font-bold text-gray-900 text-xs">
-                            {user.totalOrders || 0} orders
-                          </div>
-                          <div className="font-mono text-[11px] text-gray-500 mt-0.5 whitespace-nowrap">
-                            ৳ {(user.totalSpent || 0).toFixed(2)}
-                          </div>
-                        </td>
-
                         {/* Status (Centered) */}
                         <td className="w-[12%] px-3 py-2.5 text-center whitespace-nowrap align-middle">
-                          <div className="flex items-center justify-center">
+                          <div className="flex flex-col items-center gap-1">
                             <span
                               className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold whitespace-nowrap ${
                                 isActive
@@ -529,11 +548,20 @@ export default function AdminUsersPage() {
                                 </>
                               )}
                             </span>
+
+                            {!isActive && user.deactivationNote && (
+                              <span
+                                className="text-[10px] text-rose-600 bg-rose-50 border border-rose-200/70 rounded px-1.5 py-0.5 max-w-[130px] truncate cursor-help"
+                                title={`Admin Note: ${user.deactivationNote}`}
+                              >
+                                Note: {user.deactivationNote}
+                              </span>
+                            )}
                           </div>
                         </td>
 
-                        {/* Actions (View Details + Active/Deactive Toggle) - 18% Width Locked */}
-                        <td className="w-[18%] px-3 py-2.5 text-right whitespace-nowrap align-middle pr-4">
+                        {/* Actions (View Details + Active/Deactive Toggle) */}
+                        <td className="w-[16%] px-3 py-2.5 text-right whitespace-nowrap align-middle pr-4">
                           <div className="inline-flex items-center justify-end gap-1.5">
                             {/* Eye icon to view full details custom modal */}
                             <button
@@ -601,14 +629,40 @@ export default function AdminUsersPage() {
       {confirmModalData && (
         <ConfirmModal
           isOpen={Boolean(confirmModalData)}
-          onClose={() => setConfirmModalData(null)}
+          onClose={() => {
+            setConfirmModalData(null);
+            setDeactivationNote("");
+          }}
           onConfirm={handleExecuteToggleStatus}
           loading={actionLoadingId === confirmModalData.user?._id}
           title={confirmModalData.title}
           message={confirmModalData.message}
           confirmText={confirmModalData.confirmText}
           variant={confirmModalData.variant}
-        />
+        >
+          {confirmModalData.newStatus === false && (
+            <div className="space-y-1.5 mt-2">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-gray-700">
+                  Reason for Deactivation (Admin Note)
+                </label>
+                <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                  🔒 Admin Only
+                </span>
+              </div>
+              <textarea
+                rows={3}
+                value={deactivationNote}
+                onChange={(e) => setDeactivationNote(e.target.value)}
+                placeholder="e.g. Suspicious payment activity, fake account info, policy violation..."
+                className="w-full p-2.5 rounded-xl border border-gray-200 text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 resize-none"
+              />
+              <p className="text-[10px] text-gray-400">
+                This note is strictly internal. The customer will NOT see this reason.
+              </p>
+            </div>
+          )}
+        </ConfirmModal>
       )}
     </div>
   );

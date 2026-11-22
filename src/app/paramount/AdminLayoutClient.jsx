@@ -9,9 +9,9 @@ import { useAuth } from "@/context/AuthContext";
 import Logo from "@/components/Shared/Logo";
 import {
   FiGrid,
-  FiShoppingBag,
   FiPackage,
   FiUsers,
+  FiCreditCard,
   FiSettings,
   FiHome,
   FiLogOut,
@@ -21,12 +21,14 @@ import {
   FiShield,
   FiChevronDown,
 } from "react-icons/fi";
+import { LuShoppingBag } from "react-icons/lu";
 
 const adminNavItems = [
   { name: "Dashboard", href: "/paramount", icon: FiGrid },
   { name: "Products", href: "/paramount/products", icon: FiPackage },
-  { name: "Orders", href: "/paramount/orders", icon: FiShoppingBag },
+  { name: "Orders", href: "/paramount/orders", icon: LuShoppingBag },
   { name: "Customers", href: "/paramount/users", icon: FiUsers },
+  { name: "Payment Methods", href: "/paramount/payments", icon: FiCreditCard },
   { name: "Settings", href: "/paramount/settings", icon: FiSettings },
 ];
 

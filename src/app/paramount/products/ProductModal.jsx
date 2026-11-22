@@ -59,6 +59,7 @@ function getInitialFormData(product) {
       image: product.image || "",
       shortDescription: product.shortDescription || "",
       longDescription: product.longDescription || "",
+      isActive: product.isActive !== false,
       features: Array.isArray(product.features) ? [...product.features] : [],
       variants:
         Array.isArray(product.variants) && product.variants.length > 0
@@ -85,6 +86,7 @@ function getInitialFormData(product) {
     image: "",
     shortDescription: "",
     longDescription: "",
+    isActive: true,
     features: [
       "Instant delivery via WhatsApp & Email",
       "100% genuine and verified license",
@@ -719,6 +721,33 @@ function ProductForm({ product, onClose, onSuccess }) {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Section 5: Catalog Status & Availability */}
+        <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-xs font-bold text-gray-900 block">
+                Catalog Status & Availability
+              </span>
+              <p className="text-[11px] text-gray-500 mt-0.5">
+                {formData.isActive
+                  ? "Active — Visible to customers in store catalog and available for purchase."
+                  : "Deactivated — Hidden from customers and cannot be ordered."}
+              </p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer shrink-0">
+              <input
+                type="checkbox"
+                checked={Boolean(formData.isActive)}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, isActive: e.target.checked }))
+                }
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-(--primary)" />
+            </label>
           </div>
         </div>
 

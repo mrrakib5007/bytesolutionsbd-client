@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FiHeart, FiShoppingCart, FiStar } from "react-icons/fi";
+import { FiHeart, FiStar } from "react-icons/fi";
+import { LuShoppingBag } from "react-icons/lu";
 import { useCart } from "@/context/CartContext";
 
 const badgeStyles = {
@@ -124,7 +125,7 @@ export default function ProductCard({ product }) {
           onClick={handleAddToCart}
           className="inline-flex cursor-pointer items-center gap-1.5 rounded-md lg:rounded-xl bg-(--primary) px-5 py-2 text-xs font-bold text-white shadow-xs transition-all duration-200 hover:bg-(--primary-hover) active:scale-95 sm:text-sm"
         >
-          <FiShoppingCart className="h-4 w-4" />
+          <LuShoppingBag className="h-4 w-4" />
           <span>Add</span>
         </button>
       </div>

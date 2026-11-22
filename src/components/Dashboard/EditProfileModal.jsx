@@ -14,7 +14,6 @@ import { LuLoader } from "react-icons/lu";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthContext";
 import { uploadImageToImgBB } from "@/utils/uploadImage";
-import { COUNTRY_CONFIGS } from "@/utils/countryConfig";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -25,10 +24,15 @@ export default function EditProfileModal({ isOpen, onClose }) {
   const fileInputRef = useRef(null);
 
   // Initialize form state from user on mount
+  const initialWhatsapp = () => {
+    if (!user?.whatsapp) return "+880";
+    if (user.whatsapp.startsWith("+")) return user.whatsapp;
+    return `${user.countryCode || "+880"}${user.whatsapp}`;
+  };
+
   const [formData, setFormData] = useState(() => ({
     name: user?.name || "",
-    countryCode: user?.countryCode || "+880",
-    whatsapp: user?.whatsapp || "",
+    whatsapp: initialWhatsapp(),
     imageUrl: user?.image || DEFAULT_IMAGE,
   }));
   const [imagePreview, setImagePreview] = useState(
@@ -39,9 +43,6 @@ export default function EditProfileModal({ isOpen, onClose }) {
   const [error, setError] = useState("");
 
   if (!isOpen) return null;
-
-  const currentCountryConfig =
-    COUNTRY_CONFIGS[formData.countryCode] || COUNTRY_CONFIGS["+880"];
 
   // Handle image upload to ImgBB
   const handleImageChange = async (e) => {
@@ -70,11 +71,8 @@ export default function EditProfileModal({ isOpen, onClose }) {
   };
 
   const handleWhatsappChange = (e) => {
-    const numeric = e.target.value.replace(/\D/g, "");
-    if (numeric.length <= currentCountryConfig.maxDigits) {
-      setFormData((prev) => ({ ...prev, whatsapp: numeric }));
-      setError("");
-    }
+    setFormData((prev) => ({ ...prev, whatsapp: e.target.value }));
+    setError("");
   };
 
   const handleSubmit = async (e) => {
@@ -86,17 +84,24 @@ export default function EditProfileModal({ isOpen, onClose }) {
       return;
     }
 
-    if (!formData.whatsapp.trim()) {
+    const cleanWa = formData.whatsapp.trim().replace(/[\s\-()]/g, "");
+    const fullWa = cleanWa.startsWith("+") ? cleanWa : `+${cleanWa}`;
+
+    if (!cleanWa || cleanWa === "+" || cleanWa === "+880") {
       setError("Please enter your WhatsApp number.");
       return;
     }
 
-    if (formData.whatsapp.length < currentCountryConfig.minDigits) {
+    const phoneRegex = /^\+[1-9]\d{6,14}$/;
+    if (!phoneRegex.test(fullWa)) {
       setError(
-        `WhatsApp number must be at least ${currentCountryConfig.minDigits} digits.`
+        "Please enter a valid WhatsApp number with country code (e.g. +88017XXXXXXXX)."
       );
       return;
     }
+
+    const match = fullWa.match(/^(\+\d{1,4})/);
+    const extractedCode = match ? match[1] : "+880";
 
     try {
       setIsSaving(true);
@@ -110,8 +115,8 @@ export default function EditProfileModal({ isOpen, onClose }) {
         body: JSON.stringify({
           name: formData.name.trim(),
           image: formData.imageUrl || DEFAULT_IMAGE,
-          whatsapp: formData.whatsapp.trim(),
-          countryCode: formData.countryCode,
+          whatsapp: fullWa,
+          countryCode: extractedCode,
         }),
       });
 
@@ -233,48 +238,23 @@ export default function EditProfileModal({ isOpen, onClose }) {
             </div>
           </div>
 
-          {/* WhatsApp Field with Country Code */}
+          {/* WhatsApp Field (Single Input with default +880) */}
           <div>
             <label className="block text-xs font-bold text-gray-700 mb-1.5">
               WhatsApp Number
             </label>
-            <div className="flex gap-2">
-              <select
-                value={formData.countryCode}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    countryCode: e.target.value,
-                    whatsapp: "",
-                  }))
-                }
-                className="w-32 rounded-xl border border-gray-200 bg-white py-2.5 px-2.5 text-xs font-semibold text-gray-800 outline-none transition-all focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/15 cursor-pointer"
-              >
-                {Object.entries(COUNTRY_CONFIGS).map(([code, config]) => (
-                  <option key={code} value={code}>
-                    {config.code} ({config.label})
-                  </option>
-                ))}
-              </select>
-
-              <div className="relative flex-1">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-emerald-600">
-                  <FaWhatsapp className="h-4 w-4" />
-                </div>
-                <input
-                  type="tel"
-                  value={formData.whatsapp}
-                  onChange={handleWhatsappChange}
-                  placeholder={currentCountryConfig.placeholder}
-                  className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pr-3 pl-9 text-xs font-mono text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/15"
-                />
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-emerald-600">
+                <FaWhatsapp className="h-4 w-4" />
               </div>
-            </div>
-            <p className="mt-1 text-[11px] text-gray-500">
-              Format: {currentCountryConfig.code}{" "}
-              {currentCountryConfig.example} (
-              {currentCountryConfig.minDigits} digits)
-            </p>
+              <input
+                type="tel"
+                value={formData.whatsapp}
+                onChange={handleWhatsappChange}
+                placeholder="+880 1XXXXXXXXX"
+                className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pr-3 pl-9 text-xs font-mono text-gray-900 outline-none transition-all placeholder:text-gray-400 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/15"
+              />
+            </div>            
           </div>
 
           {/* Action Buttons */}

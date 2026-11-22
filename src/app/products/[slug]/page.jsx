@@ -62,7 +62,7 @@ export async function generateMetadata({ params }) {
   const title = `${product.title} - Genuine License Key`;
   const description =
     product.shortDescription ||
-    `Purchase genuine ${product.title} with instant delivery, verified license, and dedicated support at Soft License Hub.`;
+    `Purchase genuine ${product.title} with instant delivery, verified license, and dedicated support at Byte Solutions BD.`;
 
   const canonicalPath = `/products/${product.slug}`;
   const lowestPrice = product.variants?.[0]?.price;
@@ -73,6 +73,8 @@ export async function generateMetadata({ params }) {
     keywords: [
       product.title,
       product.category,
+      "Byte Solutions BD",
+      "ByteSolutionsBD",
       "software license",
       "buy license bd",
       "instant activation",
@@ -82,10 +84,10 @@ export async function generateMetadata({ params }) {
       canonical: canonicalPath,
     },
     openGraph: {
-      title: `${product.title} | Soft License Hub`,
+      title: `${product.title} | Byte Solutions BD`,
       description,
-      url: `https://softlicensehub.com${canonicalPath}`,
-      siteName: "Soft License Hub",
+      url: `https://bytesolutionsbd.com${canonicalPath}`,
+      siteName: "Byte Solutions BD",
       type: "article",
       images: [
         {
@@ -98,7 +100,7 @@ export async function generateMetadata({ params }) {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${product.title} | Soft License Hub`,
+      title: `${product.title} | Byte Solutions BD`,
       description,
       images: [product.image],
     },

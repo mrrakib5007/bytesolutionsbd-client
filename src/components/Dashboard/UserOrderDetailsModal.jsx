@@ -5,7 +5,6 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import {
   FiX,
-  FiShoppingBag,
   FiCheckCircle,
   FiClock,
   FiAlertCircle,
@@ -15,29 +14,21 @@ import {
   FiMail,
   FiLock,
   FiMessageSquare,
+  FiShield,
 } from "react-icons/fi";
+import { LuShoppingBag } from "react-icons/lu";
 
 export default function UserOrderDetailsModal({ isOpen, onClose, order }) {
-  const [copiedKey, setCopiedKey] = useState(false);
-  const [copiedEmail, setCopiedEmail] = useState(false);
-  const [copiedPassword, setCopiedPassword] = useState(false);
+  const [copiedKey, setCopiedKey] = useState(null);
 
   if (!isOpen || !order) return null;
 
-  const handleCopy = (text, type) => {
+  const handleCopy = (text, id) => {
     if (!text) return;
     navigator.clipboard.writeText(text);
-    if (type === "key") {
-      setCopiedKey(true);
-      setTimeout(() => setCopiedKey(false), 2000);
-    } else if (type === "email") {
-      setCopiedEmail(true);
-      setTimeout(() => setCopiedEmail(false), 2000);
-    } else if (type === "password") {
-      setCopiedPassword(true);
-      setTimeout(() => setCopiedPassword(false), 2000);
-    }
+    setCopiedKey(id);
     toast.success("Copied to clipboard!");
+    setTimeout(() => setCopiedKey(null), 2000);
   };
 
   const isCompleted = order.orderStatus === "completed";
@@ -54,28 +45,33 @@ export default function UserOrderDetailsModal({ isOpen, onClose, order }) {
       })
     : "N/A";
 
+  // Check if order has item-level deliveries
+  const hasItemDeliveries = Array.isArray(order.items) && order.items.some(
+    (it) => Array.isArray(it.deliveries) && it.deliveries.some((d) => d.licenseKey || d.accountEmail)
+  );
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
       <div className="w-full max-w-xl max-h-[90vh] overflow-y-auto slim-scrollbar rounded-3xl bg-white p-6 shadow-2xl border border-gray-100 space-y-5 animate-in fade-in zoom-in-95 duration-150">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-gray-100 pb-4">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <span className="font-mono text-base font-extrabold text-gray-900">
                 {order.orderId}
               </span>
               {isCompleted && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
                   <FiCheckCircle className="h-3 w-3" /> Completed
                 </span>
               )}
               {isPending && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700">
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-[11px] font-bold text-amber-700">
                   <FiClock className="h-3 w-3" /> Verification Pending
                 </span>
               )}
               {isCancelled && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-bold text-red-700">
+                <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-0.5 text-[11px] font-bold text-red-700">
                   <FiAlertCircle className="h-3 w-3" /> Cancelled
                 </span>
               )}
@@ -92,114 +88,293 @@ export default function UserOrderDetailsModal({ isOpen, onClose, order }) {
           </button>
         </div>
 
-        {/* Digital License / Account Delivery Details */}
+        {/* Digital License / Account Delivery Details (ONLY visible when order is completed) */}
         {isCompleted ? (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4 space-y-3">
-            <div className="flex items-center gap-2 text-emerald-800 text-xs font-bold">
-              <FiKey className="h-4 w-4 text-emerald-600" />
-              <span>Digital License & Delivery Credentials</span>
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/40 p-4 space-y-4">
+            <div className="flex items-center justify-between text-emerald-900 text-xs font-bold border-b border-emerald-200/60 pb-2">
+              <div className="flex items-center gap-1.5">
+                <FiKey className="h-4 w-4 text-emerald-600" />
+                <span>Your Delivered Digital Products</span>
+              </div>
+              <span className="text-[10px] text-emerald-700 font-mono bg-emerald-100/70 px-2 py-0.5 rounded-full">
+                Verified Delivery
+              </span>
             </div>
 
-            {/* License Key if any */}
-            {order.delivery?.licenseKey && (
-              <div className="rounded-xl border border-emerald-200 bg-white p-3 space-y-1.5 shadow-2xs">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                  License Key
-                </span>
-                <div className="flex items-center justify-between gap-2">
-                  <code className="font-mono text-xs font-bold text-emerald-950 break-all select-all">
-                    {order.delivery.licenseKey}
-                  </code>
-                  <button
-                    type="button"
-                    onClick={() => handleCopy(order.delivery.licenseKey, "key")}
-                    className="shrink-0 p-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 transition-all cursor-pointer"
-                    title="Copy Key"
-                  >
-                    {copiedKey ? (
-                      <FiCheck className="h-3.5 w-3.5 text-emerald-600" />
-                    ) : (
-                      <FiCopy className="h-3.5 w-3.5" />
+            {/* Item-level deliveries (multi-product / multi-quantity) */}
+            {hasItemDeliveries ? (
+              <div className="space-y-3">
+                {order.items.map((item, itemIdx) => {
+                  const validDeliveries = (item.deliveries || []).filter(
+                    (d) => d.licenseKey || d.accountEmail || d.accountPassword
+                  );
+
+                  if (validDeliveries.length === 0) return null;
+
+                  return (
+                    <div
+                      key={itemIdx}
+                      className="rounded-xl border border-emerald-200/80 bg-white p-3.5 space-y-3 shadow-2xs"
+                    >
+                      {/* Product Title Bar */}
+                      <div className="flex items-center gap-2.5 pb-2 border-b border-gray-100">
+                        <div className="relative h-8 w-8 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 shrink-0">
+                          {item.image ? (
+                            <Image
+                              src={item.image}
+                              alt={item.title}
+                              fill
+                              sizes="32px"
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full text-gray-300">
+                              <LuShoppingBag className="h-3.5 w-3.5" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <h5 className="font-bold text-xs text-gray-900 truncate">
+                            {item.title}
+                          </h5>
+                          <span className="text-[10px] text-gray-500 font-mono">
+                            {item.duration} • Qty: {item.quantity}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Units for this product */}
+                      <div className="space-y-2">
+                        {validDeliveries.map((delivery, dIdx) => (
+                          <div
+                            key={dIdx}
+                            className={`p-2.5 rounded-lg border ${
+                              validDeliveries.length > 1
+                                ? "bg-gray-50/60 border-gray-200"
+                                : "bg-transparent border-transparent p-0"
+                            } space-y-1.5`}
+                          >
+                            {validDeliveries.length > 1 && (
+                              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-800">
+                                Unit #{delivery.unit || dIdx + 1}
+                              </div>
+                            )}
+
+                            {/* License Key */}
+                            {delivery.licenseKey && (
+                              <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-emerald-50/50 border border-emerald-100">
+                                <div className="min-w-0">
+                                  <span className="block text-[9px] font-bold text-gray-400 uppercase tracking-wider">
+                                    License Key
+                                  </span>
+                                  <code className="font-mono text-xs font-bold text-emerald-950 break-all select-all">
+                                    {delivery.licenseKey}
+                                  </code>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleCopy(
+                                      delivery.licenseKey,
+                                      `key-${itemIdx}-${dIdx}`
+                                    )
+                                  }
+                                  className="shrink-0 p-1.5 rounded-md border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 transition-all cursor-pointer"
+                                  title="Copy Key"
+                                >
+                                  {copiedKey === `key-${itemIdx}-${dIdx}` ? (
+                                    <FiCheck className="h-3.5 w-3.5 text-emerald-600" />
+                                  ) : (
+                                    <FiCopy className="h-3.5 w-3.5" />
+                                  )}
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Account Credentials */}
+                            {(delivery.accountEmail || delivery.accountPassword) && (
+                              <div className="space-y-1.5 p-2 rounded-lg bg-emerald-50/50 border border-emerald-100 text-xs">
+                                {delivery.accountEmail && (
+                                  <div className="flex items-center justify-between gap-2">
+                                    <span className="text-gray-500 text-[11px] flex items-center gap-1">
+                                      <FiMail className="h-3 w-3 text-gray-400" /> Email:
+                                    </span>
+                                    <div className="flex items-center gap-1.5 font-mono font-bold text-gray-900">
+                                      <span className="break-all">{delivery.accountEmail}</span>
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          handleCopy(
+                                            delivery.accountEmail,
+                                            `email-${itemIdx}-${dIdx}`
+                                          )
+                                        }
+                                        className="p-1 hover:text-emerald-600 cursor-pointer"
+                                      >
+                                        {copiedKey === `email-${itemIdx}-${dIdx}` ? (
+                                          <FiCheck className="h-3 w-3 text-emerald-600" />
+                                        ) : (
+                                          <FiCopy className="h-3 w-3" />
+                                        )}
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {delivery.accountPassword && (
+                                  <div className="flex items-center justify-between gap-2">
+                                    <span className="text-gray-500 text-[11px] flex items-center gap-1">
+                                      <FiLock className="h-3 w-3 text-gray-400" /> Password:
+                                    </span>
+                                    <div className="flex items-center gap-1.5 font-mono font-bold text-gray-900">
+                                      <span>{delivery.accountPassword}</span>
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          handleCopy(
+                                            delivery.accountPassword,
+                                            `pass-${itemIdx}-${dIdx}`
+                                          )
+                                        }
+                                        className="p-1 hover:text-emerald-600 cursor-pointer"
+                                      >
+                                        {copiedKey === `pass-${itemIdx}-${dIdx}` ? (
+                                          <FiCheck className="h-3 w-3 text-emerald-600" />
+                                        ) : (
+                                          <FiCopy className="h-3 w-3" />
+                                        )}
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {delivery.note && (
+                              <p className="text-[10px] text-gray-500 italic mt-1">
+                                Note: {delivery.note}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              /* Legacy Fallback for single-item order deliveries */
+              <div className="space-y-3">
+                {order.delivery?.licenseKey && (
+                  <div className="rounded-xl border border-emerald-200 bg-white p-3 space-y-1.5 shadow-2xs">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                      License Key
+                    </span>
+                    <div className="flex items-center justify-between gap-2">
+                      <code className="font-mono text-xs font-bold text-emerald-950 break-all select-all">
+                        {order.delivery.licenseKey}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(order.delivery.licenseKey, "legacy-key")}
+                        className="shrink-0 p-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 transition-all cursor-pointer"
+                        title="Copy Key"
+                      >
+                        {copiedKey === "legacy-key" ? (
+                          <FiCheck className="h-3.5 w-3.5 text-emerald-600" />
+                        ) : (
+                          <FiCopy className="h-3.5 w-3.5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {(order.delivery?.accountEmail || order.delivery?.accountPassword) && (
+                  <div className="rounded-xl border border-emerald-200 bg-white p-3 space-y-2 shadow-2xs">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                      Account Credentials
+                    </span>
+                    {order.delivery.accountEmail && (
+                      <div className="flex items-center justify-between gap-2 text-xs">
+                        <span className="text-gray-500 flex items-center gap-1">
+                          <FiMail className="h-3.5 w-3.5 text-gray-400" /> Email:
+                        </span>
+                        <div className="flex items-center gap-1.5 font-mono font-bold text-gray-900">
+                          <span>{order.delivery.accountEmail}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopy(order.delivery.accountEmail, "legacy-email")}
+                            className="p-1 hover:text-emerald-600 cursor-pointer"
+                          >
+                            {copiedKey === "legacy-email" ? (
+                              <FiCheck className="h-3 w-3 text-emerald-600" />
+                            ) : (
+                              <FiCopy className="h-3 w-3" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
                     )}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Account Credentials if any */}
-            {(order.delivery?.accountEmail || order.delivery?.accountPassword) && (
-              <div className="rounded-xl border border-emerald-200 bg-white p-3 space-y-2 shadow-2xs">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                  Account Credentials
-                </span>
-                {order.delivery.accountEmail && (
-                  <div className="flex items-center justify-between gap-2 text-xs">
-                    <span className="text-gray-500 flex items-center gap-1">
-                      <FiMail className="h-3.5 w-3.5 text-gray-400" /> Email:
-                    </span>
-                    <div className="flex items-center gap-1.5 font-mono font-bold text-gray-900">
-                      <span>{order.delivery.accountEmail}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleCopy(order.delivery.accountEmail, "email")}
-                        className="p-1 hover:text-emerald-600 cursor-pointer"
-                      >
-                        {copiedEmail ? <FiCheck className="h-3 w-3 text-emerald-600" /> : <FiCopy className="h-3 w-3" />}
-                      </button>
-                    </div>
-                  </div>
-                )}
-                {order.delivery.accountPassword && (
-                  <div className="flex items-center justify-between gap-2 text-xs">
-                    <span className="text-gray-500 flex items-center gap-1">
-                      <FiLock className="h-3.5 w-3.5 text-gray-400" /> Password:
-                    </span>
-                    <div className="flex items-center gap-1.5 font-mono font-bold text-gray-900">
-                      <span>{order.delivery.accountPassword}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleCopy(order.delivery.accountPassword, "password")}
-                        className="p-1 hover:text-emerald-600 cursor-pointer"
-                      >
-                        {copiedPassword ? <FiCheck className="h-3 w-3 text-emerald-600" /> : <FiCopy className="h-3 w-3" />}
-                      </button>
-                    </div>
+                    {order.delivery.accountPassword && (
+                      <div className="flex items-center justify-between gap-2 text-xs">
+                        <span className="text-gray-500 flex items-center gap-1">
+                          <FiLock className="h-3.5 w-3.5 text-gray-400" /> Password:
+                        </span>
+                        <div className="flex items-center gap-1.5 font-mono font-bold text-gray-900">
+                          <span>{order.delivery.accountPassword}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleCopy(order.delivery.accountPassword, "legacy-pass")}
+                            className="p-1 hover:text-emerald-600 cursor-pointer"
+                          >
+                            {copiedKey === "legacy-pass" ? (
+                              <FiCheck className="h-3 w-3 text-emerald-600" />
+                            ) : (
+                              <FiCopy className="h-3 w-3" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             )}
 
-            {/* Admin Note if provided */}
+            {/* Support / Admin Note if provided */}
             {order.delivery?.adminNote && (
-              <div className="rounded-xl border border-blue-200 bg-blue-50/70 p-3 text-xs space-y-1">
-                <span className="font-bold text-blue-900 flex items-center gap-1.5">
-                  <FiMessageSquare className="h-3.5 w-3.5 text-blue-600" />
-                  Note from Paramount Support
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3 text-xs space-y-1">
+                <span className="font-bold text-emerald-900 flex items-center gap-1.5">
+                  <FiMessageSquare className="h-3.5 w-3.5 text-emerald-700" />
+                  Instructions from Byte Solutions BD Support
                 </span>
-                <p className="text-blue-800 whitespace-pre-wrap leading-relaxed text-[11px]">
+                <p className="text-emerald-800 whitespace-pre-wrap leading-relaxed text-[11px]">
                   {order.delivery.adminNote}
                 </p>
               </div>
             )}
           </div>
         ) : (
-          <div className="rounded-2xl border border-amber-200 bg-amber-50/50 p-4 text-xs space-y-2">
-            <div className="flex items-center gap-1.5 font-bold text-amber-900">
+          /* When order is NOT completed (e.g. pending or cancelled), show clear status notice with NO credential fields */
+          <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-4 text-xs space-y-2">
+            <div className="flex items-center gap-2 font-bold text-amber-900">
               <FiClock className="h-4 w-4 text-amber-600" />
-              <span>Payment Verification in Progress</span>
+              <span>
+                {isCancelled
+                  ? "Order Cancelled"
+                  : "Payment Verification in Progress"}
+              </span>
             </div>
             <p className="text-amber-800 text-[11px] leading-relaxed">
-              We received your payment details. Once verified by our team, your genuine license key or access credentials will appear here.
+              {isCancelled
+                ? "This order has been cancelled. If you believe this is an error or have questions, please reach out to our support team."
+                : "We have received your order and payment details. Once verified and approved by our team, your genuine license keys and digital credentials will be securely delivered right here."}
             </p>
-            {order.delivery?.adminNote && (
-              <div className="mt-2 rounded-xl border border-amber-200 bg-white p-2.5 text-[11px] text-amber-900">
-                <strong>Admin Note:</strong> {order.delivery.adminNote}
-              </div>
-            )}
           </div>
         )}
 
-        {/* Ordered Items */}
+        {/* Ordered Items Summary */}
         <div className="space-y-2">
           <h4 className="text-xs font-bold text-gray-700">Ordered Products</h4>
           <div className="divide-y divide-gray-100 rounded-2xl border border-gray-200 overflow-hidden bg-white">
@@ -217,7 +392,7 @@ export default function UserOrderDetailsModal({ isOpen, onClose, order }) {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-gray-400">
-                        <FiShoppingBag className="h-4 w-4" />
+                        <LuShoppingBag className="h-4 w-4" />
                       </div>
                     )}
                   </div>

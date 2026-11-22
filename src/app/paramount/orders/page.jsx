@@ -5,7 +5,6 @@ import toast from "react-hot-toast";
 import OrderFulfillModal from "./OrderFulfillModal";
 import AdminOrderViewModal from "./AdminOrderViewModal";
 import {
-  FiShoppingBag,
   FiSearch,
   FiRefreshCw,
   FiClock,
@@ -13,7 +12,7 @@ import {
   FiAlertCircle,
   FiEye,
 } from "react-icons/fi";
-import { LuLoader } from "react-icons/lu";
+import { LuLoader, LuShoppingBag } from "react-icons/lu";
 import { MdEdit } from "react-icons/md";
 
 export default function AdminOrdersPage() {
@@ -185,7 +184,7 @@ export default function AdminOrdersPage() {
       ) : orders.length === 0 ? (
         <div className="rounded-2xl border border-gray-200 bg-white p-16 text-center space-y-3 shadow-xs">
           <div className="inline-flex p-3 rounded-2xl bg-gray-50 border border-gray-200 text-gray-400">
-            <FiShoppingBag className="h-7 w-7" />
+            <LuShoppingBag className="h-7 w-7" />
           </div>
           <h3 className="text-sm font-bold text-gray-900">No Orders Found</h3>
           <p className="text-xs text-gray-500 max-w-sm mx-auto">

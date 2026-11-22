@@ -6,13 +6,13 @@ import {
   FiUsers,
   FiUserCheck,
   FiPackage,
-  FiShoppingBag,
   FiClock,
   FiDollarSign,
   FiTrendingUp,
   FiRefreshCw,
   FiAlertCircle,
 } from "react-icons/fi";
+import { LuShoppingBag } from "react-icons/lu";
 import toast from "react-hot-toast";
 
 const API_BASE_URL =
@@ -110,7 +110,7 @@ export default function ControlPanelDashboardPage() {
     {
       title: "Total Order",
       value: stats?.totalOrders ?? 0,
-      icon: FiShoppingBag,
+      icon: LuShoppingBag,
       color: "bg-amber-50 text-amber-600 border-amber-100",
     },
     {

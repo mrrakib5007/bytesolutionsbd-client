@@ -3,11 +3,13 @@ import CategorySection from "@/components/Home/CategorySection";
 import FeaturedProductsSection from "@/components/Home/FeaturedProductsSection";
 
 export const metadata = {
-  title: "Soft License Hub | Trusted Marketplace for Digital Products",
+  title: "Byte Solutions BD | Trusted Marketplace for Digital Products",
   description:
-    "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price with instant delivery and warranty.",
+    "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price with instant delivery and warranty at Byte Solutions BD.",
   keywords: [
-    "SoftLicenseHub",
+    "Byte Solutions BD",
+    "ByteSolutionsBD",
+    "Byte Solutions",
     "Trusted Marketplace for Digital Products",
     "WhatsApp marketing tools",
     "AI subscriptions",
@@ -23,27 +25,27 @@ export const metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Soft License Hub | Trusted Marketplace for Digital Products",
+    title: "Byte Solutions BD | Trusted Marketplace for Digital Products",
     description:
-      "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price.",
-    url: "https://softlicensehub.com",
-    siteName: "Soft License Hub",
+      "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price with Byte Solutions BD.",
+    url: "https://bytesolutionsbd.com",
+    siteName: "Byte Solutions BD",
     type: "website",
     images: [
       {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Soft License Hub - Trusted Marketplace for Digital Products",
+        url: "/byte-logo.png",
+        width: 1254,
+        height: 1254,
+        alt: "Byte Solutions BD - Trusted Marketplace for Digital Products",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Soft License Hub | Trusted Marketplace for Digital Products",
+    title: "Byte Solutions BD | Trusted Marketplace for Digital Products",
     description:
-      "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price.",
-    images: ["/og-image.png"],
+      "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price with Byte Solutions BD.",
+    images: ["/byte-logo.png"],
   },
 };
 

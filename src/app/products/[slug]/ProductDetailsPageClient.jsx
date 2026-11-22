@@ -13,8 +13,8 @@ import {
   FiMinus,
   FiPlus,
   FiCheckCircle,
-  FiShoppingCart,
 } from "react-icons/fi";
+import { LuShoppingBag } from "react-icons/lu";
 
 export default function ProductDetailsPageClient({ product }) {
   const router = useRouter();
@@ -169,7 +169,7 @@ export default function ProductDetailsPageClient({ product }) {
                 onClick={handleAddToCart}
                 className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-(--primary) bg-white px-6 text-sm font-semibold text-emerald-700 transition-colors hover:bg-emerald-50 active:scale-98 sm:w-auto cursor-pointer"
               >
-                <FiShoppingCart className="h-4 w-4" />
+                <LuShoppingBag className="h-4 w-4" />
                 <span>Add to Cart</span>
               </button>
 

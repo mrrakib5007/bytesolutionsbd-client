@@ -4,10 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 export const BRAND_CONFIG = {
-  name: "Soft License Hub",
-  shortName: "SoftLicenseHub",
-  logoPath: "/logo.png",
-  tagline: "GENUINE DIGITAL LICENSES",
+  name: "Byte Solutions BD",
+  shortName: "ByteSolutionsBD",
+  logoPath: "/byte-logo.png",
+  tagline: "GENUINE DIGITAL LICENSES & SOLUTIONS",
 };
 
 /**
@@ -78,13 +78,13 @@ export default function Logo({
       {showText && (
         <div className="flex flex-col">
           <span
-            className={`font-black tracking-tight text-black [text-shadow:0_0_1px_rgba(0,0,0,0.5)] leading-tight ${currentSize.text} ${textClassName}`}
+            className={`font-black tracking-tight text-black [text-shadow:0_0_1px_rgba(0,0,0,0.5)] leading-tight uppercase ${currentSize.text} ${textClassName}`}
           >
-            Soft{" "}
+            BYTE{" "}
             <span className="gradient-text [text-shadow:0_0_1px_var(--primary)]">
-              License
+              SOLUTIONS
             </span>{" "}
-            Hub
+            BD
           </span>
 
           {subtitle && (

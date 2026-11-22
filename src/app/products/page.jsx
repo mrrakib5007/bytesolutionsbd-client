@@ -5,8 +5,11 @@ import ProductsLoading from "./loading";
 export const metadata = {
   title: "All Products & Software Licenses",
   description:
-    "Explore our complete catalog of genuine software licenses, digital tools, subscriptions, and productivity suites with instant delivery and best prices in Bangladesh.",
+    "Explore our complete catalog of genuine software licenses, digital tools, subscriptions, and productivity suites with instant delivery and best prices in Bangladesh at Byte Solutions BD.",
   keywords: [
+    "Byte Solutions BD",
+    "ByteSolutionsBD",
+    "Byte Solutions",
     "software licenses",
     "buy software licenses bd",
     "digital keys",
@@ -22,27 +25,27 @@ export const metadata = {
     canonical: "/products",
   },
   openGraph: {
-    title: "All Products & Software Licenses - Soft License Hub",
+    title: "All Products & Software Licenses - Byte Solutions BD",
     description:
-      "Explore our complete catalog of genuine software licenses, digital tools, subscriptions, and productivity suites with instant delivery and verified warranty.",
-    url: "https://softlicensehub.com/products",
-    siteName: "Soft License Hub",
+      "Explore our complete catalog of genuine software licenses, digital tools, subscriptions, and productivity suites with instant delivery and verified warranty at Byte Solutions BD.",
+    url: "https://bytesolutionsbd.com/products",
+    siteName: "Byte Solutions BD",
     type: "website",
     images: [
       {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "All Products - Soft License Hub",
+        url: "/byte-logo.png",
+        width: 1254,
+        height: 1254,
+        alt: "All Products - Byte Solutions BD",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "All Products & Software Licenses - Soft License Hub",
+    title: "All Products & Software Licenses - Byte Solutions BD",
     description:
-      "Explore genuine software licenses and subscriptions with instant delivery.",
-    images: ["/og-image.png"],
+      "Explore genuine software licenses and subscriptions with instant delivery at Byte Solutions BD.",
+    images: ["/byte-logo.png"],
   },
 };
 

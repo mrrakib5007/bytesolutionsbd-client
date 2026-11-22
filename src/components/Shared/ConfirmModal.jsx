@@ -13,6 +13,7 @@ export default function ConfirmModal({
   cancelText = "Cancel",
   variant = "primary", // "primary" | "danger" | "success" | "warning"
   loading = false,
+  children,
 }) {
   if (!isOpen) return null;
 
@@ -80,6 +81,9 @@ export default function ConfirmModal({
             </p>
           </div>
         </div>
+
+        {/* Optional Custom Input or Form Content */}
+        {children && <div className="pt-1">{children}</div>}
 
         {/* Action Buttons */}
         <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-gray-100">

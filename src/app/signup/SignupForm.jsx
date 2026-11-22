@@ -17,90 +17,7 @@ import {
 import { FaWhatsapp } from "react-icons/fa";
 import { LuLoader } from "react-icons/lu";
 
-const COUNTRY_CONFIGS = {
-  "+880": {
-    code: "+880",
-    minDigits: 10,
-    maxDigits: 10,
-    placeholder: "1234567890",
-    example: "1234567890",
-    label: "Bangladesh",
-  },
-  "+1": {
-    code: "+1",
-    minDigits: 10,
-    maxDigits: 10,
-    placeholder: "2025550143",
-    example: "2025550143",
-    label: "USA / Canada",
-  },
-  "+44": {
-    code: "+44",
-    minDigits: 10,
-    maxDigits: 10,
-    placeholder: "7911123456",
-    example: "7911123456",
-    label: "United Kingdom",
-  },
-  "+91": {
-    code: "+91",
-    minDigits: 10,
-    maxDigits: 10,
-    placeholder: "9876543210",
-    example: "9876543210",
-    label: "India",
-  },
-  "+971": {
-    code: "+971",
-    minDigits: 9,
-    maxDigits: 9,
-    placeholder: "501234567",
-    example: "501234567",
-    label: "UAE",
-  },
-  "+966": {
-    code: "+966",
-    minDigits: 9,
-    maxDigits: 9,
-    placeholder: "512345678",
-    example: "512345678",
-    label: "Saudi Arabia",
-  },
-  "+60": {
-    code: "+60",
-    minDigits: 9,
-    maxDigits: 10,
-    placeholder: "123456789",
-    example: "123456789",
-    label: "Malaysia",
-  },
-  "+65": {
-    code: "+65",
-    minDigits: 8,
-    maxDigits: 8,
-    placeholder: "81234567",
-    example: "81234567",
-    label: "Singapore",
-  },
-  "+61": {
-    code: "+61",
-    minDigits: 9,
-    maxDigits: 9,
-    placeholder: "412345678",
-    example: "412345678",
-    label: "Australia",
-  },
-  "+49": {
-    code: "+49",
-    minDigits: 10,
-    maxDigits: 11,
-    placeholder: "15123456789",
-    example: "15123456789",
-    label: "Germany",
-  },
-};
 
-const COUNTRY_CODES = Object.keys(COUNTRY_CONFIGS);
 
 export default function SignupForm() {
   const router = useRouter();
@@ -110,8 +27,7 @@ export default function SignupForm() {
 
   const [formData, setFormData] = useState({
     name: "",
-    countryCode: "+880",
-    whatsapp: "",
+    whatsapp: "+880",
     email: "",
     password: "",
   });
@@ -147,35 +63,16 @@ export default function SignupForm() {
 
     if (field === "whatsapp") {
       const trimmed = value?.trim() || "";
-      if (!trimmed) {
+      if (!trimmed || trimmed === "+" || trimmed === "+880") {
         error = "WhatsApp number is required.";
       } else {
-        const cleanDigits = trimmed.replace(/[\s\-()]/g, "");
-        if (!/^\d+$/.test(cleanDigits)) {
-          error = "WhatsApp number must contain only numbers.";
-        } else {
-          const config = COUNTRY_CONFIGS[countryCode] || {
-            minDigits: 10,
-            maxDigits: 14,
-            example: "1234567890",
-          };
-
-          // Warn if user inputs leading 0 (e.g. 019... instead of 19...)
-          if (cleanDigits.startsWith("0")) {
-            error = `Please enter ${config.minDigits} digits without leading 0 (e.g. ${config.example}).`;
-          } else if (config.minDigits === config.maxDigits) {
-            const regex = new RegExp(`^\\d{${config.minDigits}}$`);
-            if (!regex.test(cleanDigits)) {
-              error = `For ${countryCode}, WhatsApp number must be exactly ${config.minDigits} digits (e.g. ${config.example}).`;
-            }
-          } else {
-            const regex = new RegExp(
-              `^\\d{${config.minDigits},${config.maxDigits}}$`,
-            );
-            if (!regex.test(cleanDigits)) {
-              error = `For ${countryCode}, WhatsApp number must be between ${config.minDigits} and ${config.maxDigits} digits.`;
-            }
-          }
+        const cleanNumber = trimmed.replace(/[\s\-()]/g, "");
+        const formatted = cleanNumber.startsWith("+")
+          ? cleanNumber
+          : `+${cleanNumber}`;
+        if (!/^\+[1-9]\d{6,14}$/.test(formatted)) {
+          error =
+            "Please enter a valid WhatsApp number with country code (e.g. +88017XXXXXXXX).";
         }
       }
     }
@@ -195,22 +92,10 @@ export default function SignupForm() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "countryCode") {
-      setFormData((prev) => ({ ...prev, countryCode: value }));
-      // Re-validate whatsapp if already entered
-      if (formData.whatsapp) {
-        const error = validateField("whatsapp", formData.whatsapp, value);
-        setErrors((prev) => ({ ...prev, whatsapp: error }));
-      }
-      return;
-    }
-
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Real-time validation if field was touched
     if (touched[name]) {
-      const error = validateField(name, value, formData.countryCode);
+      const error = validateField(name, value);
       setErrors((prev) => ({ ...prev, [name]: error }));
     }
   };
@@ -218,7 +103,7 @@ export default function SignupForm() {
   const handleBlur = (e) => {
     const { name, value } = e.target;
     setTouched((prev) => ({ ...prev, [name]: true }));
-    const error = validateField(name, value, formData.countryCode);
+    const error = validateField(name, value);
     setErrors((prev) => ({ ...prev, [name]: error }));
   };
 
@@ -237,11 +122,7 @@ export default function SignupForm() {
     const newErrors = {
       name: validateField("name", formData.name),
       email: validateField("email", formData.email),
-      whatsapp: validateField(
-        "whatsapp",
-        formData.whatsapp,
-        formData.countryCode,
-      ),
+      whatsapp: validateField("whatsapp", formData.whatsapp),
       password: validateField("password", formData.password),
     };
 
@@ -257,12 +138,17 @@ export default function SignupForm() {
     setIsSubmitting(true);
 
     try {
+      const cleanWa = formData.whatsapp.trim().replace(/[\s\-()]/g, "");
+      const fullWa = cleanWa.startsWith("+") ? cleanWa : `+${cleanWa}`;
+      const match = fullWa.match(/^(\+\d{1,4})/);
+      const extractedCode = match ? match[1] : "+880";
+
       const res = await signup({
         name: formData.name.trim(),
         email: formData.email.trim(),
         password: formData.password,
-        whatsapp: formData.whatsapp.trim(),
-        countryCode: formData.countryCode,
+        whatsapp: fullWa,
+        countryCode: extractedCode,
       });
 
       if (res.success) {
@@ -270,8 +156,7 @@ export default function SignupForm() {
         // Reset form
         setFormData({
           name: "",
-          countryCode: "+880",
-          whatsapp: "",
+          whatsapp: "+880",
           email: "",
           password: "",
         });
@@ -340,7 +225,7 @@ export default function SignupForm() {
               )}
             </div>
 
-            {/* WhatsApp (Required) with Country Code */}
+            {/* WhatsApp Number (Single Input with default +880) */}
             <div>
               <label
                 htmlFor="whatsapp"
@@ -348,47 +233,25 @@ export default function SignupForm() {
               >
                 WhatsApp Number <span className="text-red-500">*</span>
               </label>
-              <div className="relative mt-1.5 flex rounded-xl shadow-xs">
-                {/* Country Code Select */}
-                <div className="relative">
-                  <select
-                    name="countryCode"
-                    value={formData.countryCode}
-                    onChange={handleChange}
-                    className="h-full rounded-l-xl border border-r-0 border-gray-200 bg-gray-100/70 px-3 py-2.5 text-xs font-semibold text-gray-700 transition-all outline-none hover:bg-gray-100 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/15"
-                  >
-                    {COUNTRY_CODES.map((code) => (
-                      <option key={code} value={code}>
-                        {code}
-                      </option>
-                    ))}
-                  </select>
+              <div className="relative mt-1.5">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-emerald-600">
+                  <FaWhatsapp className="h-4 w-4" />
                 </div>
-
-                {/* Phone Input */}
-                <div className="relative flex-1">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-emerald-600">
-                    <FaWhatsapp className="h-4 w-4" />
-                  </div>
-                  <input
-                    type="tel"
-                    id="whatsapp"
-                    name="whatsapp"
-                    value={formData.whatsapp}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder={
-                      COUNTRY_CONFIGS[formData.countryCode]?.placeholder ||
-                      "1234567890"
-                    }
-                    className={`block w-full rounded-r-xl border py-2.5 pr-3.5 pl-9 text-sm text-gray-900 transition-all outline-none placeholder:text-gray-400 ${
-                      errors.whatsapp && touched.whatsapp
-                        ? "border-red-400 bg-red-50/20 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-                        : "border-gray-200 bg-gray-50/40 focus:border-(--primary) focus:bg-white focus:ring-4 focus:ring-(--primary)/15"
-                    }`}
-                  />
-                </div>
-              </div>
+                <input
+                  type="tel"
+                  id="whatsapp"
+                  name="whatsapp"
+                  value={formData.whatsapp}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  placeholder="+880 1XXXXXXXXX"
+                  className={`block w-full rounded-xl border py-2.5 pr-3.5 pl-10 text-sm font-mono text-gray-900 transition-all outline-none placeholder:text-gray-400 ${
+                    errors.whatsapp && touched.whatsapp
+                      ? "border-red-400 bg-red-50/20 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                      : "border-gray-200 bg-gray-50/40 focus:border-(--primary) focus:bg-white focus:ring-4 focus:ring-(--primary)/15"
+                  }`}
+                />
+              </div>              
               {errors.whatsapp && touched.whatsapp && (
                 <p className="mt-1.5 flex items-center gap-1 text-xs font-medium text-red-500">
                   <FiAlertCircle className="h-3.5 w-3.5 shrink-0" />

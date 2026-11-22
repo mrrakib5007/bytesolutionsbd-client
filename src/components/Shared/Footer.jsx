@@ -129,10 +129,10 @@ export default function Footer() {
                     Email:
                   </span>
                   <a
-                    href="mailto:softlicensehub1@gmail.com"
+                    href="mailto:bytesolutionsbd@gmail.com"
                     className="text-sm font-semibold text-gray-900 transition-colors hover:text-(--primary)"
                   >
-                    softlicensehub1@gmail.com
+                    bytesolutionsbd@gmail.com
                   </a>
                 </div>
               </div>
@@ -143,7 +143,7 @@ export default function Footer() {
 
       <div className="border-t border-gray-200/60 py-6">
         <p className="text-center text-xs text-gray-500">
-          © <CurrentYear /> SoftLicenseHub. All rights reserved.
+          © <CurrentYear /> Byte Solutions BD. All rights reserved.
         </p>
       </div>
     </footer>
