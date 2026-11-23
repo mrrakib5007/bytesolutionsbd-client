@@ -40,7 +40,13 @@ export default async function sitemap() {
       url: `${SITE_URL}/login`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.4,
+      priority: 0.5,
+    },
+    {
+      url: `${SITE_URL}/signup`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
     {
       url: `${SITE_URL}/register`,

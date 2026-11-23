@@ -571,7 +571,7 @@ export default function AdminUsersPage() {
 
                             {!isActive && user.deactivationNote && (
                               <span
-                                className="text-[10px] text-rose-600 bg-rose-50 border border-rose-200/70 rounded px-1.5 py-0.5 max-w-[110px] truncate cursor-help"
+                                className="text-[10px] text-rose-600 bg-rose-50 border border-rose-200/70 rounded px-1.5 py-0.5 max-w-27.5 truncate cursor-help"
                                 title={`Admin Note: ${user.deactivationNote}`}
                               >
                                 Note: {user.deactivationNote}

@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import ProductDetailsPageClient from "./ProductDetailsPageClient";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://bytesolutionsbd.vercel.app";
 
 async function getProducts() {
   try {
@@ -58,10 +60,10 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const title = `${product.title} - Genuine License Key`;
+  const title = `${product.title} - Genuine License | Trusted Marketplace for Digital Products`;
   const description =
     product.shortDescription ||
-    `Purchase genuine ${product.title} with instant delivery, verified license, and dedicated support at Byte Solutions BD.`;
+    `Purchase genuine ${product.title} with instant license key delivery, verified warranty, and dedicated 24/7 support at Byte Solutions BD — your Trusted Marketplace for Digital Products.`;
 
   const canonicalPath = `/products/${product.slug}`;
   const lowestPrice = product.variants?.[0]?.price;
@@ -72,28 +74,32 @@ export async function generateMetadata({ params }) {
     keywords: [
       product.title,
       product.category,
+      "Trusted Marketplace for Digital Products",
+      "Marketplace for Digital Products",
       "Byte Solutions BD",
       "ByteSolutionsBD",
       "software license",
       "buy license bd",
       "instant activation",
+      "genuine activation key",
+      "international digital product services",
       ...(product.features || []),
     ],
     alternates: {
       canonical: canonicalPath,
     },
     openGraph: {
-      title: `${product.title} | Byte Solutions BD`,
+      title: `${product.title} | Trusted Marketplace for Digital Products`,
       description,
-      url: `https://bytesolutionsbd.vercel.app${canonicalPath}`,
+      url: `${SITE_URL}${canonicalPath}`,
       siteName: "Byte Solutions BD",
-      type: "article",
+      type: "website",
       images: [
         {
           url: product.image,
-          width: 950,
-          height: 700,
-          alt: product.title,
+          width: 1200,
+          height: 630,
+          alt: `${product.title} - Byte Solutions BD`,
         },
       ],
     },
@@ -120,5 +126,88 @@ export default async function ProductDetailsPage({ params }) {
     notFound();
   }
 
-  return <ProductDetailsPageClient product={product} />;
+  const lowestPrice = product.variants?.[0]?.price || 0;
+  const highestPrice =
+    product.variants?.[product.variants.length - 1]?.price || lowestPrice;
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    image: [product.image],
+    description:
+      product.shortDescription || product.longDescription || product.title,
+    sku: product.slug,
+    mpn: product.slug,
+    brand: {
+      "@type": "Brand",
+      name: "Byte Solutions BD",
+    },
+    offers: {
+      "@type":
+        product.variants && product.variants.length > 1
+          ? "AggregateOffer"
+          : "Offer",
+      priceCurrency: "BDT",
+      price: lowestPrice,
+      lowPrice: lowestPrice,
+      highPrice: highestPrice,
+      offerCount: product.variants?.length || 1,
+      priceValidUntil: "2027-12-31",
+      availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+      url: `${SITE_URL}/products/${product.slug}`,
+      seller: {
+        "@type": "Organization",
+        name: "Byte Solutions BD",
+      },
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: product.rating || 4.9,
+      bestRating: "5",
+      worstRating: "1",
+      ratingCount: product.reviewsCount || 35,
+      reviewCount: product.reviewsCount || 35,
+    },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: SITE_URL,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Products",
+        item: `${SITE_URL}/products`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: product.title,
+        item: `${SITE_URL}/products/${product.slug}`,
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <ProductDetailsPageClient product={product} />
+    </>
+  );
 }

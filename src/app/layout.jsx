@@ -19,26 +19,39 @@ export const metadata = {
   metadataBase: new URL(siteUrl),
 
   title: {
-    default: "Byte Solutions BD | Software Licenses & Digital Products",
+    default: "Byte Solutions BD | Trusted Marketplace for Digital Products",
     template: "%s | Byte Solutions BD",
   },
 
   description:
-    "Discover software licenses, activation keys, digital subscriptions, and premium digital products at Byte Solutions BD. Shop digital products with ease.",
+    "Byte Solutions BD is the Trusted Marketplace for Digital Products. Buy genuine software licenses, WhatsApp marketing tools, Canva Pro, Windows 11 keys, Office 365, VPNs, and AI subscriptions with instant delivery.",
 
   applicationName: "Byte Solutions BD",
 
   keywords: [
+    "Trusted Marketplace for Digital Products",
+    "Marketplace for Digital Products",
     "Byte Solutions BD",
     "ByteSolutionsBD",
     "Byte Solutions",
     "software licenses",
-    "software activation keys",
-    "digital products",
     "genuine software keys",
-    "digital subscriptions",
-    "premium digital products",
+    "software activation keys",
+    "digital products marketplace",
+    "international digital product services",
+    "Canva Pro subscription",
+    "Windows 11 Pro license key",
+    "Office 365 subscription",
+    "ChatGPT Plus subscription",
+    "Claude Pro subscription",
+    "WhatsApp marketing tools",
+    "WhatsApp Sender Pro",
+    "VPN subscriptions",
+    "NordVPN ExpressVPN license",
+    "Adobe Creative Cloud",
+    "developer tools & licenses",
     "buy software online bangladesh",
+    "instant license key delivery",
   ],
 
   authors: [{ name: "Byte Solutions BD" }],
@@ -53,26 +66,26 @@ export const metadata = {
     type: "website",
     url: siteUrl,
     siteName: "Byte Solutions BD",
-    title: "Byte Solutions BD | Software Licenses & Digital Products",
+    title: "Byte Solutions BD | Trusted Marketplace for Digital Products",
     description:
-      "Explore software licenses, activation keys, subscriptions, and digital products at Byte Solutions BD.",
+      "Your Trusted Marketplace for Digital Products. Genuine software licenses, WhatsApp marketing tools, Canva Pro, Windows keys, and AI subscriptions with instant delivery.",
     locale: "en_US",
     images: [
       {
-        url: "/byte-logo.png",
-        width: 1254,
-        height: 1254,
-        alt: "Byte Solutions BD Logo",
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Byte Solutions BD - Trusted Marketplace for Digital Products",
       },
     ],
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Byte Solutions BD | Software Licenses & Digital Products",
+    title: "Byte Solutions BD | Trusted Marketplace for Digital Products",
     description:
-      "Shop software licenses, activation keys, subscriptions, and digital products at Byte Solutions BD.",
-    images: ["/byte-logo.png"],
+      "Shop genuine software licenses, activation keys, marketing suites, and digital subscriptions on the Trusted Marketplace for Digital Products.",
+    images: ["/og-image.png"],
   },
 
   icons: {
@@ -97,15 +110,35 @@ export const metadata = {
   },
 };
 
-const jsonLd = {
+const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Byte Solutions BD",
-  alternateName: "ByteSolutionsBD",
+  alternateName: ["ByteSolutionsBD", "Trusted Marketplace for Digital Products"],
+  slogan: "Trusted Marketplace for Digital Products",
   url: siteUrl,
   logo: `${siteUrl}/byte-logo.png`,
   description:
-    "Discover software licenses, activation keys, digital subscriptions, and premium digital products at Byte Solutions BD.",
+    "Byte Solutions BD is the Trusted Marketplace for Digital Products, offering genuine software licenses, activation keys, digital tools, and subscriptions with instant delivery.",
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: "+8801991465007",
+    contactType: "Customer Support",
+    availableLanguage: ["English", "Bengali"],
+  },
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Byte Solutions BD",
+  alternateName: ["ByteSolutionsBD", "Trusted Marketplace for Digital Products"],
+  url: siteUrl,
+  potentialAction: {
+    "@type": "SearchAction",
+    target: `${siteUrl}/products?search={search_term_string}`,
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export default function RootLayout({ children }) {
@@ -118,7 +151,11 @@ export default function RootLayout({ children }) {
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
       <body

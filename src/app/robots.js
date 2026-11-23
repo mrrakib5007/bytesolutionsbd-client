@@ -7,7 +7,15 @@ export default function robots() {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/paramount/", "/dashboard/", "/checkout/"],
+        disallow: [
+          "/paramount",
+          "/paramount/*",
+          "/dashboard",
+          "/dashboard/*",
+          "/checkout",
+          "/checkout/*",
+          "/api/*",
+        ],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

@@ -6,21 +6,31 @@ import FloatingWhatsApp from "@/components/Home/FloatingWhatsApp";
 export const metadata = {
   title: "Byte Solutions BD | Trusted Marketplace for Digital Products",
   description:
-    "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price with instant delivery and warranty at Byte Solutions BD.",
+    "Byte Solutions BD is your Trusted Marketplace for Digital Products. Buy genuine software licenses, WhatsApp marketing tools, Canva Pro, Windows 11 keys, Office 365, VPNs, and AI subscriptions with instant delivery and warranty.",
   keywords: [
+    "Trusted Marketplace for Digital Products",
+    "Marketplace for Digital Products",
+    "Trusted Digital Products Marketplace",
     "Byte Solutions BD",
     "ByteSolutionsBD",
     "Byte Solutions",
-    "Trusted Marketplace for Digital Products",
     "WhatsApp marketing tools",
+    "WhatsApp Sender Pro",
     "AI subscriptions",
+    "ChatGPT Plus subscription",
+    "Claude Pro subscription",
+    "Canva Pro subscription",
+    "Windows 11 Pro activation key",
+    "Office 365 genuine license",
     "VPNs",
+    "NordVPN",
+    "ExpressVPN",
     "design tools",
     "digital products at best price",
     "software licenses bd",
-    "canva pro subscription",
-    "wa sender marketing suite",
     "genuine license keys",
+    "international digital product services",
+    "instant license delivery",
   ],
   alternates: {
     canonical: "/",
@@ -28,15 +38,15 @@ export const metadata = {
   openGraph: {
     title: "Byte Solutions BD | Trusted Marketplace for Digital Products",
     description:
-      "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price with Byte Solutions BD.",
+      "Buy WhatsApp marketing tools, AI subscriptions, VPNs, Canva Pro, Windows keys, and genuine software licenses at Byte Solutions BD — the Trusted Marketplace for Digital Products.",
     url: "https://bytesolutionsbd.vercel.app",
     siteName: "Byte Solutions BD",
     type: "website",
     images: [
       {
-        url: "/byte-logo.png",
-        width: 1254,
-        height: 1254,
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
         alt: "Byte Solutions BD - Trusted Marketplace for Digital Products",
       },
     ],
@@ -45,8 +55,8 @@ export const metadata = {
     card: "summary_large_image",
     title: "Byte Solutions BD | Trusted Marketplace for Digital Products",
     description:
-      "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price with Byte Solutions BD.",
-    images: ["/byte-logo.png"],
+      "Your Trusted Marketplace for Digital Products. Genuine software licenses, activation keys, and subscriptions with instant delivery.",
+    images: ["/og-image.png"],
   },
 };
 
