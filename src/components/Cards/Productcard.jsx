@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { FiHeart, FiStar } from "react-icons/fi";
+import { FiStar } from "react-icons/fi";
 import { LuShoppingBag } from "react-icons/lu";
 import { useCart } from "@/context/CartContext";
 
@@ -63,14 +63,6 @@ export default function ProductCard({ product }) {
               </span>
             )}
           </div>
-
-          <button
-            type="button"
-            aria-label="Add to wishlist"
-            className="absolute top-4 right-4 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-white/90 text-neutral-700 shadow-xs backdrop-blur-xs transition-all duration-200 hover:bg-white hover:text-rose-500 active:scale-90"
-          >
-            <FiHeart className="h-4 w-4" />
-          </button>
         </div>
 
         <div className="p-4 sm:p-5">

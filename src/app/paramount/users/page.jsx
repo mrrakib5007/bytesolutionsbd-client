@@ -406,8 +406,8 @@ export default function AdminUsersPage() {
                     </div>
                   </div>
 
-                  {/* Info Grid: WhatsApp & Registration Date */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  {/* Info Grid: WhatsApp, Registration Date & Last Login */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                     <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-0.5">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
                         WhatsApp / Phone
@@ -423,6 +423,19 @@ export default function AdminUsersPage() {
                       </span>
                       <p className="text-gray-600 truncate">
                         {formatDhakaDateTime(user.createdAt)}
+                      </p>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 space-y-0.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
+                        Last Login
+                      </span>
+                      <p className="text-gray-600 truncate">
+                        {user.lastLoginAt ? (
+                          formatDhakaDateTime(user.lastLoginAt)
+                        ) : (
+                          <span className="text-gray-400 italic">Never</span>
+                        )}
                       </p>
                     </div>
                   </div>
@@ -448,19 +461,21 @@ export default function AdminUsersPage() {
             <div className="w-full overflow-hidden">
               <table className="w-full text-left text-xs text-gray-600 border-collapse table-fixed">
                 <colgroup>
-                  <col className="w-[32%]" />
-                  <col className="w-[20%]" />
-                  <col className="w-[20%]" />
-                  <col className="w-[12%]" />
-                  <col className="w-[16%]" />
+                  <col className="w-[28%]" />
+                  <col className="w-[18%]" />
+                  <col className="w-[18%]" />
+                  <col className="w-[18%]" />
+                  <col className="w-[9%]" />
+                  <col className="w-[9%]" />
                 </colgroup>
                 <thead className="bg-gray-50 text-[11px] font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200">
                   <tr>
-                    <th className="w-[32%] px-3 py-2.5 whitespace-nowrap">User Info</th>
-                    <th className="w-[20%] px-3 py-2.5 whitespace-nowrap">WhatsApp / Phone</th>
-                    <th className="w-[20%] px-3 py-2.5 whitespace-nowrap">Role & Joined</th>
-                    <th className="w-[12%] px-3 py-2.5 text-center whitespace-nowrap">Status</th>
-                    <th className="w-[16%] px-3 py-2.5 text-right whitespace-nowrap pr-4">Actions</th>
+                    <th className="w-[28%] px-3 py-2.5 whitespace-nowrap">User Info</th>
+                    <th className="w-[18%] px-3 py-2.5 whitespace-nowrap">WhatsApp / Phone</th>
+                    <th className="w-[18%] px-3 py-2.5 whitespace-nowrap">Role & Joined</th>
+                    <th className="w-[18%] px-3 py-2.5 whitespace-nowrap">Last Login</th>
+                    <th className="w-[9%] px-3 py-2.5 text-center whitespace-nowrap">Status</th>
+                    <th className="w-[9%] px-3 py-2.5 text-right whitespace-nowrap pr-4">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -472,7 +487,7 @@ export default function AdminUsersPage() {
                     return (
                       <tr key={user._id} className="hover:bg-gray-50/60 transition-colors">
                         {/* User Info (Avatar + Name + Email) */}
-                        <td className="w-[32%] px-3 py-2.5 align-middle">
+                        <td className="w-[28%] px-3 py-2.5 align-middle">
                           <div className="flex items-center gap-2.5 min-w-0">
                             <div className="relative h-8 w-8 rounded-full overflow-hidden border border-gray-200 bg-gray-50 shrink-0">
                               <Image
@@ -495,14 +510,14 @@ export default function AdminUsersPage() {
                         </td>
 
                         {/* WhatsApp / Phone */}
-                        <td className="w-[20%] px-3 py-2.5 whitespace-nowrap align-middle">
+                        <td className="w-[18%] px-3 py-2.5 whitespace-nowrap align-middle">
                           <div className="font-mono font-bold text-gray-800 text-xs">
                             {user.whatsapp || "Not provided"}
                           </div>
                         </td>
 
                         {/* Role & Joined Date */}
-                        <td className="w-[20%] px-3 py-2.5 whitespace-nowrap align-middle">
+                        <td className="w-[18%] px-3 py-2.5 whitespace-nowrap align-middle">
                           <div>
                             <span
                               className={`inline-flex items-center gap-1 rounded-full px-2 py-0.2 text-[10px] font-bold ${
@@ -520,8 +535,19 @@ export default function AdminUsersPage() {
                           </div>
                         </td>
 
+                        {/* Last Login */}
+                        <td className="w-[18%] px-3 py-2.5 whitespace-nowrap align-middle">
+                          <div className="text-xs text-gray-700 font-medium">
+                            {user.lastLoginAt ? (
+                              formatDhakaDateTime(user.lastLoginAt)
+                            ) : (
+                              <span className="text-gray-400 italic">Never</span>
+                            )}
+                          </div>
+                        </td>
+
                         {/* Status (Centered) */}
-                        <td className="w-[12%] px-3 py-2.5 text-center whitespace-nowrap align-middle">
+                        <td className="w-[9%] px-3 py-2.5 text-center whitespace-nowrap align-middle">
                           <div className="flex flex-col items-center gap-1">
                             <span
                               className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold whitespace-nowrap ${
@@ -555,7 +581,7 @@ export default function AdminUsersPage() {
                         </td>
 
                         {/* Actions (View Details + Active/Deactive Toggle) */}
-                        <td className="w-[16%] px-3 py-2.5 text-right whitespace-nowrap align-middle pr-4">
+                        <td className="w-[9%] px-3 py-2.5 text-right whitespace-nowrap align-middle pr-4">
                           <div className="inline-flex items-center justify-end gap-1.5">
                             {/* Eye icon to view full details custom modal */}
                             <button

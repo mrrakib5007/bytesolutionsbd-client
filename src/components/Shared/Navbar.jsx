@@ -48,7 +48,6 @@ export default function Navbar() {
     { name: "Home", href: "/" },
     { name: "All Products", href: "/products" },
     { name: "Special Offers", href: "/special-offers" },
-    { name: "Best Sellers", href: "/best-sellers" },
     { name: "Downloads", href: "/downloads" },
   ];
 

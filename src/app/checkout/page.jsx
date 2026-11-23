@@ -122,13 +122,30 @@ export default function CheckoutPage() {
       return;
     }
 
+    const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+
     if (!senderNumber.trim()) {
-      toast.error("Please enter your sender mobile number.");
+      toast.error("Please enter your sender mobile/account number.");
+      return;
+    }
+
+    if (!alphanumericRegex.test(senderNumber.trim())) {
+      toast.error("Sender account number can only contain letters and numbers (0-9, a-z, A-Z).");
       return;
     }
 
     if (!trxId.trim()) {
       toast.error("Please enter your payment Transaction ID (TrxID).");
+      return;
+    }
+
+    if (!alphanumericRegex.test(trxId.trim())) {
+      toast.error("Transaction ID (TrxID) can only contain letters and numbers (0-9, a-z, A-Z).");
+      return;
+    }
+
+    if (customerNote && customerNote.trim().length > 100) {
+      toast.error("Order Note / Remarks cannot exceed 100 characters.");
       return;
     }
 
@@ -398,15 +415,19 @@ export default function CheckoutPage() {
                           Your Sender {activePayment.name} Number / Account <span className="text-red-500">*</span>
                         </label>
                         <input
-                          type="tel"
+                          type="text"
                           required
                           value={senderNumber}
-                          onChange={(e) => setSenderNumber(e.target.value)}
+                          onChange={(e) => {
+                            const clean = e.target.value.replace(/[^a-zA-Z0-9]/g, "");
+                            setSenderNumber(clean);
+                          }}
                           placeholder="e.g. 017XXXXXXXX"
-                          className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-(--primary) focus:ring-1 focus:ring-(--primary) outline-none transition-all"
+                          maxLength={30}
+                          className="w-full font-mono rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-(--primary) focus:ring-1 focus:ring-(--primary) outline-none transition-all"
                         />
                         <p className="mt-1 text-[11px] text-gray-400">
-                          The account or mobile number you sent the money from.
+                          Account/mobile number (letters and digits only, e.g. 0-9, a-z, A-Z).
                         </p>
                       </div>
 
@@ -418,24 +439,40 @@ export default function CheckoutPage() {
                           type="text"
                           required
                           value={trxId}
-                          onChange={(e) => setTrxId(e.target.value.toUpperCase())}
+                          onChange={(e) => {
+                            const clean = e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+                            setTrxId(clean);
+                          }}
                           placeholder="e.g. BL7A982K1Q"
+                          maxLength={35}
                           className="w-full font-mono uppercase tracking-wider rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-(--primary) focus:ring-1 focus:ring-(--primary) outline-none transition-all"
                         />
                         <p className="mt-1 text-[11px] text-gray-400">
-                          Found in the confirmation SMS or {activePayment.name} statement.
+                          Found in the confirmation SMS or statement (letters and digits only).
                         </p>
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-gray-900 mb-1.5">
-                          Order Note / Remarks (Optional)
-                        </label>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <label className="block text-xs font-bold text-gray-900">
+                            Order Note / Remarks (Optional)
+                          </label>
+                          <span
+                            className={`text-[10px] font-mono ${
+                              customerNote.length >= 90
+                                ? "text-amber-600 font-bold"
+                                : "text-gray-400"
+                            }`}
+                          >
+                            {customerNote.length}/100
+                          </span>
+                        </div>
                         <textarea
                           rows={2}
+                          maxLength={100}
                           value={customerNote}
-                          onChange={(e) => setCustomerNote(e.target.value)}
-                          placeholder="Any specific delivery instructions or custom details..."
+                          onChange={(e) => setCustomerNote(e.target.value.slice(0, 100))}
+                          placeholder="Any specific delivery instructions or custom details (max 100 characters)..."
                           className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-(--primary) focus:ring-1 focus:ring-(--primary) outline-none transition-all resize-none"
                         />
                       </div>

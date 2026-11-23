@@ -153,9 +153,16 @@ export default function AdminUserViewModal({
                   )}
                 </span>
               </div>
-              <p className="text-xs text-gray-400 mt-0.5">
-                Joined: {formatDhakaDateTime(user.createdAt)} (Dhaka Time)
-              </p>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500 mt-1">
+                <span>Joined: {formatDhakaDateTime(user.createdAt)}</span>
+                <span className="text-gray-300">•</span>
+                <span>
+                  Last Login:{" "}
+                  <span className="font-semibold text-gray-800">
+                    {user.lastLoginAt ? formatDhakaDateTime(user.lastLoginAt) : "Never"}
+                  </span>
+                </span>
+              </div>
             </div>
           </div>
 
@@ -257,6 +264,29 @@ export default function AdminUserViewModal({
                 </button>
               )}
             </div>
+          </div>
+
+          {/* Registration Date & Last Login Cards */}
+          <div className="p-3.5 rounded-2xl bg-gray-50 border border-gray-100 space-y-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
+              Registration Date
+            </span>
+            <span className="font-medium text-gray-800 text-xs block">
+              {formatDhakaDateTime(user.createdAt)}
+            </span>
+          </div>
+
+          <div className="p-3.5 rounded-2xl bg-gray-50 border border-gray-100 space-y-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">
+              Last Login Time
+            </span>
+            <span className="font-medium text-gray-800 text-xs block">
+              {user.lastLoginAt ? (
+                formatDhakaDateTime(user.lastLoginAt)
+              ) : (
+                <span className="text-gray-400 italic">Never logged in</span>
+              )}
+            </span>
           </div>
         </div>
 

@@ -5,6 +5,7 @@ import Image from "next/image";
 import {
   FiX,
   FiUploadCloud,
+  FiCamera,
   FiUser,
   FiCheck,
   FiAlertCircle,
@@ -172,20 +173,37 @@ export default function EditProfileModal({ isOpen, onClose }) {
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Photo Upload Section */}
           <div className="flex flex-col items-center text-center">
-            <div className="relative h-20 w-20 rounded-full overflow-hidden border-2 border-(--primary) shadow-md mb-2">
+            <button
+              type="button"
+              disabled={isUploading}
+              onClick={() => fileInputRef.current?.click()}
+              aria-label="Click to upload profile photo"
+              title="Click to change profile photo"
+              className="group relative h-20 w-20 rounded-full overflow-hidden border-2 border-(--primary) shadow-md mb-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-(--primary) focus:ring-offset-2 transition-transform active:scale-95 disabled:cursor-not-allowed"
+            >
               <Image
                 src={imagePreview || DEFAULT_IMAGE}
                 alt="Profile Preview"
                 fill
                 sizes="80px"
-                className="object-cover"
+                className="object-cover transition-transform duration-200 group-hover:scale-105"
               />
+
+              {/* Hover overlay with camera icon */}
+              {!isUploading && (
+                <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity duration-200">
+                  <FiCamera className="h-5 w-5" />
+                  <span className="text-[9px] font-bold mt-0.5">Upload</span>
+                </div>
+              )}
+
+              {/* Uploading Spinner */}
               {isUploading && (
                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white">
                   <LuLoader className="h-5 w-5 animate-spin" />
                 </div>
               )}
-            </div>
+            </button>
 
             <input
               ref={fileInputRef}

@@ -114,22 +114,28 @@ export default function BannerSection() {
                     transform: `translate3d(-${currentIndex * 100}%, 0, 0)`,
                   }}
                 >
-                  {extendedSlides.map((item, index) => (
-                    <Link
-                      key={`${item.id}-${index}`}
-                      href={item.productUrl}
-                      className="relative h-full w-full shrink-0 basis-full overflow-hidden bg-gray-200"
-                    >
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.title}
-                        fill
-                        priority={index === 1 || (!isMultiple && index === 0)}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 45vw, 400px"
-                        className="object-cover select-none"
-                      />
-                    </Link>
-                  ))}
+                  {extendedSlides.map((item, index) => {
+                    const isInitialSlide =
+                      index === 1 || (!isMultiple && index === 0);
+
+                    return (
+                      <Link
+                        key={`${item.id}-${index}`}
+                        href={item.productUrl}
+                        className="relative h-full w-full shrink-0 basis-full overflow-hidden bg-gray-200"
+                      >
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.title}
+                          fill
+                          priority={isInitialSlide}
+                          loading="eager"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 45vw, 400px"
+                          className="object-cover select-none"
+                        />
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
 

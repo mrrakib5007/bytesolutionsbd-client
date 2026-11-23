@@ -1,6 +1,7 @@
 import BannerSection from "@/components/Home/BannerSection";
 import CategorySection from "@/components/Home/CategorySection";
 import FeaturedProductsSection from "@/components/Home/FeaturedProductsSection";
+import FloatingWhatsApp from "@/components/Home/FloatingWhatsApp";
 
 export const metadata = {
   title: "Byte Solutions BD | Trusted Marketplace for Digital Products",
@@ -77,6 +78,7 @@ export default async function Home() {
       <BannerSection />
       <CategorySection />
       <FeaturedProductsSection initialProducts={products} />
+      <FloatingWhatsApp />
     </div>
   );
 }
