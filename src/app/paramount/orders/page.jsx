@@ -15,6 +15,8 @@ import {
 import { LuLoader, LuShoppingBag } from "react-icons/lu";
 import { MdEdit } from "react-icons/md";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ export default function AdminOrdersPage() {
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
-      let url = `http://localhost:5000/api/admin/orders?status=${activeFilter}`;
+      let url = `${API_BASE_URL}/admin/orders?status=${activeFilter}`;
       if (searchQuery.trim()) {
         url += `&search=${encodeURIComponent(searchQuery.trim())}`;
       }
@@ -68,7 +70,7 @@ export default function AdminOrdersPage() {
     let active = true;
     const loadOrdersOnFilter = async () => {
       try {
-        let url = `http://localhost:5000/api/admin/orders?status=${activeFilter}`;
+        let url = `${API_BASE_URL}/admin/orders?status=${activeFilter}`;
         if (searchQuery.trim()) {
           url += `&search=${encodeURIComponent(searchQuery.trim())}`;
         }

@@ -28,7 +28,7 @@ export const metadata = {
     title: "Byte Solutions BD | Trusted Marketplace for Digital Products",
     description:
       "WhatsApp marketing tools, AI subscriptions, VPNs, design tools and more, all digital products in one place at the best price with Byte Solutions BD.",
-    url: "https://bytesolutionsbd.com",
+    url: "https://bytesolutionsbd.vercel.app",
     siteName: "Byte Solutions BD",
     type: "website",
     images: [
@@ -49,8 +49,7 @@ export const metadata = {
   },
 };
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function getProducts() {
   try {

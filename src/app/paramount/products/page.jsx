@@ -21,8 +21,7 @@ import toast from "react-hot-toast";
 import Loading from "@/components/Loading";
 import ProductModal from "./ProductModal";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState([]);

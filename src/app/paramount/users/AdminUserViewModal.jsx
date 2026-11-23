@@ -16,6 +16,8 @@ import {
 } from "react-icons/fi";
 import { LuLoader } from "react-icons/lu";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function AdminUserViewModal({
   isOpen,
   onClose,
@@ -71,7 +73,7 @@ export default function AdminUserViewModal({
     const newStatus = !isActive;
     setTogglingStatus(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${user._id}/status`, {
+      const res = await fetch(`${API_BASE_URL}/admin/users/${user._id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -238,23 +240,12 @@ export default function AdminUserViewModal({
             </span>
             <div className="flex items-center justify-between gap-2">
               <span className="font-mono font-bold text-emerald-800 truncate">
-                {user.whatsapp
-                  ? user.whatsapp.startsWith("+")
-                    ? user.whatsapp
-                    : `${user.countryCode || "+880"} ${user.whatsapp}`
-                  : "Not provided"}
+                {user.whatsapp || "Not provided"}
               </span>
               {user.whatsapp && (
                 <button
                   type="button"
-                  onClick={() =>
-                    handleCopy(
-                      user.whatsapp.startsWith("+")
-                        ? user.whatsapp
-                        : `${user.countryCode || "+880"}${user.whatsapp}`,
-                      "Phone"
-                    )
-                  }
+                  onClick={() => handleCopy(user.whatsapp, "Phone")}
                   className="p-1 text-gray-400 hover:text-gray-700 cursor-pointer shrink-0"
                   title="Copy phone"
                 >

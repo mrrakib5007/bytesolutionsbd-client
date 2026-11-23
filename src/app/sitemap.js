@@ -1,6 +1,6 @@
-const SITE_URL = "https://bytesolutionsbd.com";
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://bytesolutionsbd.vercel.app";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default async function sitemap() {
   let productEntries = [];

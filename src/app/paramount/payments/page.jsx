@@ -17,8 +17,7 @@ import { LuLoader } from "react-icons/lu";
 import PaymentMethodModal from "./PaymentMethodModal";
 import ConfirmModal from "@/components/Shared/ConfirmModal";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function AdminPaymentMethodsPage() {
   const [methods, setMethods] = useState([]);

@@ -22,8 +22,7 @@ import {
 } from "react-icons/fi";
 import { LuLoader, LuShoppingBag } from "react-icons/lu";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // Fallback payment accounts if offline or loading
 const FALLBACK_PAYMENT_METHODS = [
@@ -153,7 +152,7 @@ export default function CheckoutPage() {
         customerNote: customerNote.trim(),
       };
 
-      const res = await fetch("http://localhost:5000/api/orders", {
+      const res = await fetch(`${API_BASE_URL}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -15,6 +15,7 @@ import {
 import { LuShoppingBag } from "react-icons/lu";
 
 const DEFAULT_IMAGE = "https://i.ibb.co.com/ycfgs7BG/profile.jpg";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function UserDashboardLayout({ children }) {
   const { user, logout } = useAuth();
@@ -27,7 +28,7 @@ export default function UserDashboardLayout({ children }) {
   useEffect(() => {
     let ignore = false;
 
-    fetch("http://localhost:5000/api/orders/my-orders", {
+    fetch(`${API_BASE_URL}/orders/my-orders`, {
       credentials: "include",
     })
       .then((res) => (res.ok ? res.json() : null))

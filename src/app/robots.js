@@ -1,3 +1,6 @@
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://bytesolutionsbd.vercel.app";
+
 export default function robots() {
   return {
     rules: [
@@ -7,6 +10,6 @@ export default function robots() {
         disallow: ["/paramount/", "/dashboard/", "/checkout/"],
       },
     ],
-    sitemap: "https://bytesolutionsbd.com/sitemap.xml",
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

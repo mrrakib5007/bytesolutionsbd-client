@@ -15,8 +15,7 @@ import {
 import toast from "react-hot-toast";
 import { uploadImageToImgBB } from "@/utils/uploadImage";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const PRESET_CATEGORIES = [
   "Marketing & Sales",

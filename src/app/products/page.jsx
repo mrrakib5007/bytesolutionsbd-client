@@ -28,7 +28,7 @@ export const metadata = {
     title: "All Products & Software Licenses - Byte Solutions BD",
     description:
       "Explore our complete catalog of genuine software licenses, digital tools, subscriptions, and productivity suites with instant delivery and verified warranty at Byte Solutions BD.",
-    url: "https://bytesolutionsbd.com/products",
+    url: "https://bytesolutionsbd.vercel.app/products",
     siteName: "Byte Solutions BD",
     type: "website",
     images: [
@@ -49,8 +49,7 @@ export const metadata = {
   },
 };
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function getProducts() {
   try {

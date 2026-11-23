@@ -19,6 +19,8 @@ import {
 } from "react-icons/fi";
 import { LuLoader } from "react-icons/lu";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function AdminUsersPage() {
   const { user: currentAdmin } = useAuth();
   const currentAdminId = currentAdmin?.id || currentAdmin?._id;
@@ -53,7 +55,7 @@ export default function AdminUsersPage() {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      let url = `http://localhost:5000/api/admin/users?status=${activeFilter}&role=${roleFilter}`;
+      let url = `${API_BASE_URL}/admin/users?status=${activeFilter}&role=${roleFilter}`;
       if (searchQuery.trim()) {
         url += `&search=${encodeURIComponent(searchQuery.trim())}`;
       }
@@ -80,7 +82,7 @@ export default function AdminUsersPage() {
     let active = true;
     const loadUsersOnFilter = async () => {
       try {
-        let url = `http://localhost:5000/api/admin/users?status=${activeFilter}&role=${roleFilter}`;
+        let url = `${API_BASE_URL}/admin/users?status=${activeFilter}&role=${roleFilter}`;
         if (searchQuery.trim()) {
           url += `&search=${encodeURIComponent(searchQuery.trim())}`;
         }
@@ -138,7 +140,7 @@ export default function AdminUsersPage() {
 
     setActionLoadingId(user._id);
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${user._id}/status`, {
+      const res = await fetch(`${API_BASE_URL}/admin/users/${user._id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -411,11 +413,7 @@ export default function AdminUsersPage() {
                         WhatsApp / Phone
                       </span>
                       <p className="font-mono font-bold text-emerald-800 truncate">
-                        {user.whatsapp
-                          ? user.whatsapp.startsWith("+")
-                            ? user.whatsapp
-                            : `${user.countryCode || "+880"} ${user.whatsapp}`
-                          : "Not provided"}
+                        {user.whatsapp || "Not provided"}
                       </p>
                     </div>
 
@@ -499,11 +497,7 @@ export default function AdminUsersPage() {
                         {/* WhatsApp / Phone */}
                         <td className="w-[20%] px-3 py-2.5 whitespace-nowrap align-middle">
                           <div className="font-mono font-bold text-gray-800 text-xs">
-                            {user.whatsapp
-                              ? user.whatsapp.startsWith("+")
-                                ? user.whatsapp
-                                : `${user.countryCode || "+880"}${user.whatsapp}`
-                              : "Not provided"}
+                            {user.whatsapp || "Not provided"}
                           </div>
                         </td>
 

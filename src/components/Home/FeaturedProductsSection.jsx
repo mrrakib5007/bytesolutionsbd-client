@@ -6,8 +6,7 @@ import { FiArrowRight } from "react-icons/fi";
 import SectionHeading from "@/components/Shared/SectionHeading";
 import ProductCard from "@/components/Cards/Productcard";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function FeaturedProductsSection({ initialProducts = [] }) {
   const [fetchedProducts, setFetchedProducts] = useState([]);

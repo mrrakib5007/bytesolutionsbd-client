@@ -38,7 +38,7 @@ export default function SignupForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Validation function with Regex
-  const validateField = (field, value, countryCode = formData.countryCode) => {
+  const validateField = (field, value) => {
     let error = "";
 
     if (field === "name") {
@@ -140,15 +140,12 @@ export default function SignupForm() {
     try {
       const cleanWa = formData.whatsapp.trim().replace(/[\s\-()]/g, "");
       const fullWa = cleanWa.startsWith("+") ? cleanWa : `+${cleanWa}`;
-      const match = fullWa.match(/^(\+\d{1,4})/);
-      const extractedCode = match ? match[1] : "+880";
 
       const res = await signup({
         name: formData.name.trim(),
         email: formData.email.trim(),
         password: formData.password,
         whatsapp: fullWa,
-        countryCode: extractedCode,
       });
 
       if (res.success) {

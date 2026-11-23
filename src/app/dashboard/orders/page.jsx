@@ -13,6 +13,8 @@ import {
 } from "react-icons/fi";
 import { LuLoader, LuShoppingBag } from "react-icons/lu";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export default function MyOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
@@ -24,7 +26,7 @@ export default function MyOrdersPage() {
   useEffect(() => {
     let ignore = false;
 
-    fetch("http://localhost:5000/api/orders/my-orders", {
+    fetch(`${API_BASE_URL}/orders/my-orders`, {
       credentials: "include",
     })
       .then((res) => (res.ok ? res.json() : null))
@@ -51,7 +53,7 @@ export default function MyOrdersPage() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
-      const res = await fetch("http://localhost:5000/api/orders/my-orders", {
+      const res = await fetch(`${API_BASE_URL}/orders/my-orders`, {
         credentials: "include",
       });
       const data = await res.json();

@@ -15,8 +15,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "@/context/AuthContext";
 import { uploadImageToImgBB } from "@/utils/uploadImage";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 const DEFAULT_IMAGE = "https://i.ibb.co.com/ycfgs7BG/profile.jpg";
 
 export default function EditProfileModal({ isOpen, onClose }) {
@@ -26,8 +25,7 @@ export default function EditProfileModal({ isOpen, onClose }) {
   // Initialize form state from user on mount
   const initialWhatsapp = () => {
     if (!user?.whatsapp) return "+880";
-    if (user.whatsapp.startsWith("+")) return user.whatsapp;
-    return `${user.countryCode || "+880"}${user.whatsapp}`;
+    return user.whatsapp.startsWith("+") ? user.whatsapp : `+${user.whatsapp}`;
   };
 
   const [formData, setFormData] = useState(() => ({
@@ -100,9 +98,6 @@ export default function EditProfileModal({ isOpen, onClose }) {
       return;
     }
 
-    const match = fullWa.match(/^(\+\d{1,4})/);
-    const extractedCode = match ? match[1] : "+880";
-
     try {
       setIsSaving(true);
 
@@ -116,7 +111,6 @@ export default function EditProfileModal({ isOpen, onClose }) {
           name: formData.name.trim(),
           image: formData.imageUrl || DEFAULT_IMAGE,
           whatsapp: fullWa,
-          countryCode: extractedCode,
         }),
       });
 

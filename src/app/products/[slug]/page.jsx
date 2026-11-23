@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 import ProductDetailsPageClient from "./ProductDetailsPageClient";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function getProducts() {
   try {
@@ -86,7 +85,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `${product.title} | Byte Solutions BD`,
       description,
-      url: `https://bytesolutionsbd.com${canonicalPath}`,
+      url: `https://bytesolutionsbd.vercel.app${canonicalPath}`,
       siteName: "Byte Solutions BD",
       type: "article",
       images: [
