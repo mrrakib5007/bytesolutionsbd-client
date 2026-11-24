@@ -20,12 +20,14 @@ import {
   FiBell,
   FiShield,
   FiChevronDown,
+  FiDownload,
 } from "react-icons/fi";
 import { LuShoppingBag } from "react-icons/lu";
 
 const adminNavItems = [
   { name: "Dashboard", href: "/paramount", icon: FiGrid },
   { name: "Products", href: "/paramount/products", icon: FiPackage },
+  { name: "Downloads", href: "/paramount/downloads", icon: FiDownload },
   { name: "Orders", href: "/paramount/orders", icon: LuShoppingBag },
   { name: "Customers", href: "/paramount/users", icon: FiUsers },
   { name: "Payment Methods", href: "/paramount/payments", icon: FiCreditCard },

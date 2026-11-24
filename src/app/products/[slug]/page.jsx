@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import ProductDetailsPageClient from "./ProductDetailsPageClient";
 
@@ -118,7 +119,34 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function ProductDetailsPage({ params }) {
+function ProductDetailsSkeleton() {
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-pulse space-y-6">
+      {/* Breadcrumbs skeleton */}
+      <div className="flex items-center gap-2">
+        <div className="h-4 w-12 bg-gray-200 rounded-md" />
+        <div className="h-4 w-3 bg-gray-200 rounded-md" />
+        <div className="h-4 w-16 bg-gray-200 rounded-md" />
+        <div className="h-4 w-3 bg-gray-200 rounded-md" />
+        <div className="h-4 w-28 bg-gray-200 rounded-md" />
+      </div>
+
+      {/* Product grid skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="aspect-square bg-gray-100 rounded-3xl border border-gray-200" />
+        <div className="space-y-4">
+          <div className="h-5 w-24 bg-gray-200 rounded-lg" />
+          <div className="h-8 w-3/4 bg-gray-200 rounded-lg" />
+          <div className="h-5 w-1/3 bg-gray-200 rounded-lg" />
+          <div className="h-20 w-full bg-gray-100 rounded-2xl" />
+          <div className="h-12 w-full bg-gray-200 rounded-xl" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+async function ProductDetailsContent({ params }) {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
 
@@ -209,5 +237,13 @@ export default async function ProductDetailsPage({ params }) {
       />
       <ProductDetailsPageClient product={product} />
     </>
+  );
+}
+
+export default function ProductDetailsPage({ params }) {
+  return (
+    <Suspense fallback={<ProductDetailsSkeleton />}>
+      <ProductDetailsContent params={params} />
+    </Suspense>
   );
 }

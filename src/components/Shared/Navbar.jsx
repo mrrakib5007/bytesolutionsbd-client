@@ -87,16 +87,26 @@ export default function Navbar() {
           </div>
 
           <ul className="hidden items-center gap-7 lg:flex">
-            {navLinks.map((link) => (
-              <li key={link.name}>
-                <Link
-                  href={link.href}
-                  className="text-sm font-medium text-black transition-colors hover:text-(--primary)"
-                >
-                  {link.name}
-                </Link>
-              </li>
-            ))}
+            {navLinks.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname?.startsWith(link.href);
+              return (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    className={`text-sm font-medium transition-colors ${
+                      isActive
+                        ? "text-(--primary) font-semibold"
+                        : "text-black hover:text-(--primary)"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="flex items-center gap-2.5">
@@ -271,17 +281,27 @@ export default function Navbar() {
 
         <nav className="flex-1 overflow-y-auto px-5 py-4">
           <ul className="flex flex-col gap-2">
-            {navLinks.map((link) => (
-              <li key={link.name}>
-                <Link
-                  href={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block rounded-lg py-2 text-base font-semibold text-black transition-colors hover:text-(--primary)"
-                >
-                  {link.name}
-                </Link>
-              </li>
-            ))}
+            {navLinks.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname?.startsWith(link.href);
+              return (
+                <li key={link.name}>
+                  <Link
+                    href={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block rounded-lg py-2 text-base font-semibold transition-colors ${
+                      isActive
+                        ? "text-(--primary)"
+                        : "text-black hover:text-(--primary)"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 

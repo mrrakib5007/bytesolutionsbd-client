@@ -24,6 +24,7 @@ export default function Footer() {
 
   const company = [
     { name: "About Us", href: "/about" },
+    { name: "Software Downloads", href: "/downloads" },
     { name: "Contact Us", href: "/contact" },
     { name: "Privacy Policy", href: "/privacy-policy" },
     { name: "Terms and Conditions", href: "/terms" },

@@ -4,6 +4,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default async function sitemap() {
   let productEntries = [];
+  let downloadEntries = [];
 
   try {
     const res = await fetch(`${API_BASE_URL}/products`, {
@@ -11,7 +12,7 @@ export default async function sitemap() {
     });
     if (res.ok) {
       const data = await res.json();
-      const products = Array.isArray(data) ? data : data?.products || [];
+      const products = Array.isArray(data) ? data : data?.products || data?.data || [];
       productEntries = products.map((product) => ({
         url: `${SITE_URL}/products/${product.slug}`,
         lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
@@ -21,6 +22,24 @@ export default async function sitemap() {
     }
   } catch {
     // If backend isn't reachable during build/request, proceed gracefully
+  }
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/downloads`, {
+      next: { revalidate: 3600 },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const downloads = Array.isArray(data) ? data : data?.downloads || data?.data || [];
+      downloadEntries = downloads.map((item) => ({
+        url: `${SITE_URL}/downloads/${item.slug}`,
+        lastModified: item.updatedAt ? new Date(item.updatedAt) : new Date(),
+        changeFrequency: "weekly",
+        priority: 0.8,
+      }));
+    }
+  } catch {
+    // Graceful fallback
   }
 
   const staticEntries = [
@@ -35,6 +54,12 @@ export default async function sitemap() {
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/downloads`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.8,
     },
     {
       url: `${SITE_URL}/login`,
@@ -56,5 +81,5 @@ export default async function sitemap() {
     },
   ];
 
-  return [...staticEntries, ...productEntries];
+  return [...staticEntries, ...productEntries, ...downloadEntries];
 }
